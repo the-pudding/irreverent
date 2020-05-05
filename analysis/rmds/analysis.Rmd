@@ -138,7 +138,7 @@ allTotal <- rbind(m12, m13, m23, m21, m31, m32) %>%
 allWide <- all %>% 
   pivot_wider(id_cols = "word1", names_from = "word2", values_from = "n")
 
-write.csv(allWide, "../../web/src/assets/data/relation.csv", row.names = FALSE)
+write.csv(allWide, "../../web/src/assets/data/relation.csv", row.names = FALSE, na = "NULL")
 
 head(allTotal, 10)
 ```

@@ -5,6 +5,7 @@ import linkFix from './utils/link-fix';
 import graphic from './graphic';
 import footer from './footer';
 import common from './common';
+import together from './together';
 
 const $body = d3.select('body');
 let previousWidth = 0;
@@ -46,6 +47,7 @@ function init() {
   // load footer stories
   footer.init();
   common.init();
+  together.init();
 }
 
 init();

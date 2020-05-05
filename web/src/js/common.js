@@ -18,10 +18,7 @@ function generateWordGroups() {
 
   $group
     .selectAll('.word')
-    .data((d) => {
-      console.log({ d });
-      return d.n;
-    })
+    .data((d) => d.n)
     .join((enter) => {
       const div = enter.append('div').attr('class', 'word');
 
@@ -45,7 +42,6 @@ function init() {
   loadData('common.csv')
     .then((result) => {
       data = cleanData(result);
-      console.log({ data });
       generateWordGroups();
     })
     .catch(console.error);

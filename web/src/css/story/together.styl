@@ -1,0 +1,28 @@
+.together
+    &__figure
+        max-width $column-width 
+        margin 5rem auto 0 auto
+        padding 0 1rem
+
+        .meta 
+            margin-top 1rem
+            .legend__text
+                set-type-size('root')
+                font-family $national-narrow
+            .chosen, .count
+                font-family $anton
+                background $primary 
+                padding 0 0.4rem
+            
+            select 
+                font-family $anton
+                set-type-size('root')
+
+    .figure__inner 
+        display flex 
+        flex-wrap wrap 
+        flex-direction row
+        .word 
+            font-family $national-narrow
+            set-type-size('medium')
+            margin 0.1rem 0.5rem

@@ -2,6 +2,29 @@
     max-width $column-width
     margin 0 auto
     padding 1rem
+    .meta 
+        .legend__text
+            font-family $national-narrow
+            set-type-size('root')
+            margin 0
+
+        .figure-legend
+            display flex 
+            flex-direction row 
+            align-items center
+
+        .legend__block 
+            width 70px 
+            height 20px
+            background $gray-dark
+            margin-right 0.5rem
+            p
+                set-type-size('small')
+                margin 0
+                text-align center
+                word-wrap normal
+                font-family $anton
+                color $gray-light 
     .figure__inner
         display flex
         flex-direction row
@@ -16,7 +39,7 @@
                 padding 0 0.1rem
 
             .word__text
-                text-transform uppercase
+                //text-transform uppercase
                 set-type-size('small')
                 margin 0
                 text-align center
