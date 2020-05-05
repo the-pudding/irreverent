@@ -1,0 +1,14 @@
+<section class='quiz'>
+    {{#each doc.preQuiz}}
+    <p class='prose'>{{{value}}}</p>
+    {{/each}}
+
+    <fieldset>
+        <legend>{{{doc.quizQ}}}</legend>
+        {{#each doc.options}}
+        <input id={{this.letter}} type='radio' name='definition' value={{this.letter}}>
+        <label for={{this.letter}}>{{this.def}}</label></br>
+        {{/each}}
+    </fieldset>
+    <button class='submit'>{{doc.quizButton}}</button>
+</section>
