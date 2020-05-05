@@ -1,0 +1,29 @@
+<section class='intro'>
+	<div class='intro__meta'>
+		<p class='intro__byline'>
+			<a href='{{meta.author.url}}' target='_blank'>
+				<strong>{{doc.author}}</strong>
+			</a>
+		</p>
+		<time class='intro__time'>{{{doc.date}}}</time>
+	</div>
+
+
+	{{#each doc.intro}}
+	<p class='prose'>{{{value}}}</p>
+	{{/each}}
+
+	<div class='highlight'>
+		<div class='highlight__inner'>
+			<p class='prose__highlight'>{{{doc.highlight}}}</p>
+		</div>
+	</div>
+
+
+
+	{{#each doc.post-highlight}}
+	<p class='prose'>{{{value}}}</p>
+	{{/each}}
+
+
+</section>

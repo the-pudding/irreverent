@@ -1,0 +1,30 @@
+.common
+    max-width $column-width
+    margin 0 auto
+    padding 1rem
+    .figure__inner
+        display flex
+        flex-direction row
+        .group
+            display flex
+            flex-direction column-reverse
+            .word 
+                width 70px
+                overflow hidden
+                margin 0.1rem 0.25rem
+                background $gray-dark
+                padding 0 0.1rem
+
+            .word__text
+                text-transform uppercase
+                set-type-size('small')
+                margin 0
+                text-align center
+                word-wrap normal
+                font-family $anton
+                color $gray-light
+        .group--irreverent 
+            .word 
+                background $primary
+                &__text 
+                    color $white

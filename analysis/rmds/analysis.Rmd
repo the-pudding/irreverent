@@ -1,0 +1,163 @@
+---
+title: "Pudding Styled Report"
+author: "Your Name"
+date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  puddingR::puddingTheme:
+    toc: true
+    code_folding: "show"
+    number_sections: "false"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Introduction
+
+We've been in the habit lately of leaving our TV on for background noise. Sometimes, if I leave our smart TV on the Netflix app without selecting an account, a screensaver will appear that shows a still image from a show or movie, the title, and 3 descriptive words. Since I've been seeing this frequently, lately, I've started noticing something peculiar...a seemingly large number of shows are described as "irreverent". It's always kind of bothered me, so I wanted to see if there really were a surprisingly large number of shows with that label.
+
+### Load Packages
+
+```{r load_packages}
+# For general data cleaning and analysis
+library(tidyverse)
+
+# For keeping your files in relative directories
+library(here)
+
+# If you want to interact with Google Drive (e.g., upload or download files)
+library(googledrive)
+
+# For interactive/searchable tables in your report
+library(DT)
+```
+
+### Load Data
+
+To collect the data, I just let the screensaver play until it looped, recording the title and descriptive words as it went. Then I created a brand new Netflix profile, didn't give it any input on my preferences and started recording the words for shows on the home screen.
+
+```{r load_gd_2, eval = FALSE}
+sheetID <- googledrive::as_id("https://docs.google.com/spreadsheets/d/1cuvIHbH1yhewxldzqwwS0RMQmk1QjfK-J5FSN7z8VFM/edit#gid=0")
+
+googledrive::drive_download(sheetID, 
+                            path = here("assets", "data", "raw_data", "netflix.csv"), 
+                            overwrite = TRUE)
+
+```
+
+```{r}
+
+netflix <- readr::read_csv(here::here("assets", "data", "raw_data", "netflix.csv")) %>% 
+  # remove kids / family movies
+  filter(word1 != "children & family" & word2 != "children & family" & word3 != "children & family") %>% 
+  filter(word1 != "kids" & word2 != "kids" & word3 != "kids")
+```
+
+## Exploration
+
+### Common Words
+
+Ok, so how many shows are described by the word `irreverent`?
+
+```{r}
+netflixLong <- netflix %>% 
+  pivot_longer(cols = c("word1", "word2", "word3"), names_to = "position", names_prefix = "word", values_to = "word")
+
+irr <- netflixLong %>% 
+  filter(word == "irreverent")
+```
+
+Ok, so `r nrow(irr)` of `r nrow(netflix)` shows (`r nrow(irr)/nrow(netflix) * 100`) are described as `irreverent`. That seems high...
+
+Which words are most commonly used?
+
+```{r}
+common <- netflixLong %>% 
+  count(word) %>% 
+  arrange(desc(n)) 
+
+topCommon <- head(common, 15)
+
+write.csv(topCommon, "../../web/src/assets/data/common.csv", row.names = FALSE)
+```
+ Irreverent is the most common word!! Whyyyyy.
+ 
+### Network
+
+Are the same combinations of words used more than once?
+
+```{r}
+sorted <- netflix %>% 
+  rowwise() %>% 
+  #mutate(sorted = paste0(c(word1, word2, word3), collapse = "-"))
+  mutate(sorted = paste0(sort(c(word1, word2, word3)), collapse = "-")) %>% 
+  count(sorted)
+```
+
+Nope! Each show appears to have a unique combination of 3 words. So now to find out which used are together. 
+
+This is probably the least efficient way to do this, but it'll work
+
+
+```{r}
+m12 <- netflix %>% 
+  select(c(word1, word2))
+
+m13 <- netflix %>% 
+  select(c(word1, word3)) %>% 
+  rename(word2 = word3)
+
+m23 <- netflix %>% 
+  select(c(word2, word3)) %>% 
+  rename(word1 = word2, word2 = word3)
+
+m21 <- netflix %>% 
+  select(c(word2, word1)) %>% 
+  rename(word3 = word1, word1 = word2) %>% 
+  rename(word2 = word3)
+
+m31 <- netflix %>% 
+  select(c(word3, word1)) %>% 
+  rename(word2 = word1, word1 = word3)
+
+m32 <- netflix %>% 
+  select(c(word3, word2)) %>% 
+  rename(word1 = word3)
+
+all <- rbind(m12, m13, m23, m21, m31, m32) %>% 
+  group_by(word1, word2) %>% 
+  count() 
+
+allTotal <- rbind(m12, m13, m23, m21, m31, m32) %>% 
+  distinct() %>% 
+  group_by(word1) %>% 
+  count()  %>% 
+  arrange(desc(n))
+
+allWide <- all %>% 
+  pivot_wider(id_cols = "word1", names_from = "word2", values_from = "n")
+
+write.csv(allWide, "../../web/src/assets/data/relation.csv", row.names = FALSE)
+
+head(allTotal, 10)
+```
+
+Ok, so, so far, `irreverent` is the most used word, but also used in combination with the most other words. So, it has the least consistent usage...
+
+```{r}
+irrOther <- rbind(m12, m13, m23, m21, m31, m32) %>% 
+  filter(word1 == "irreverent") %>% 
+  distinct()
+
+irrOther$word2
+```
+
+It also (subjectively speaking) is the most difficult word. Words like `witty`, `comedy`, `cynical` and `drama` are all pretty straightforward, but I have to google `irreverent` everytime I see it used as a descriptor. Overall, I just want to know why Netflix uses this term so much. 
+
+Afterall, the definition is: 
+
+> showing a lack of respect for people or things that are generally taken seriously.
+
+But if everything is irreverent, is anything reverent? 
+

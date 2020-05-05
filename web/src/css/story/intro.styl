@@ -1,0 +1,39 @@
+.intro
+	margin 0 auto
+	padding 6rem 1rem 3rem 1rem
+
+	&__hed
+		max-width 60rem
+		margin 0 auto
+		text-align center
+		
+	&__dek
+		max-width $column-width
+		margin 0 auto
+		margin-top 1rem
+		text-align center
+
+.intro__meta 
+	display flex 
+	flex-direction column
+	width 150px
+	position absolute 
+	top 8rem
+	left 0
+	translate(calc(-100% - 37px),0)
+	justify-content flex-end
+
+	p, time 
+		font-weight 500
+		margin 0
+		text-align right
+
+	time 
+		font-family $national-narrow
+		set-type-size('small')
+
+	p
+		font-family $anton 
+		set-type-size('medium')
+		a
+			border-bottom none
