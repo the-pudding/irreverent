@@ -44,6 +44,21 @@ d3.selection.prototype.adsChart = function init(options) {
       return [...new Set(arr)];
     }
 
+    function revealWords(title) {
+      const allWords = $vis.selectAll('.word');
+      const theseWords = allWords.filter((d, i, n) => {
+        return d3.select(n[i]).attr('data-title') === title;
+      });
+
+      allWords.attr('opacity', 0);
+      theseWords
+        .attr('opacity', 1)
+        .attr(
+          'transform',
+          (d, i) => `translate(${width * ((i + 2) / 5)}, ${height / 2})`
+        );
+    }
+
     const Chart = {
       // called once at start
       init() {
@@ -74,69 +89,17 @@ d3.selection.prototype.adsChart = function init(options) {
         // offset chart for margins
         $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
 
-        // animate in the titles
-        const $titleGroup = $tv.append('g').attr('class', 'g-titles');
-
-        $titleGroup
-          .selectAll('.title')
-          .data(data, (d) => d.title)
-          .join((enter) =>
-            enter
-              .append('text')
-              .attr('class', 'show__title title')
-              .text((d) => d.title)
-              .style('fill', '#FFF')
-          )
-          .attr('text-anchor', 'middle')
-          .attr('transform', `translate(${width / 2}, ${FONT_HEIGHT})`)
-          .attr('opacity', 0)
-          .transition()
-          .delay((d, i) => delayTime * i)
-          .attr('opacity', 1)
-          .transition()
-          .delay(transitionTime)
-          .attr('opacity', 0);
-
         // add the descriptive words
-
-        // first, figure out all the possible unique words
-        // const words = data
-        //   .map((d) => {
-        //     return { words: [d.word1, d.word2, d.word3] };
-        //   })
-        //   .map((d) => d.words)
-        //   .flat();
-
-        // const nestedWords = d3
-        //   .nest()
-        //   .key((d) => d)
-        //   .entries(words);
-
-        // console.log({ nestedWords });
-
-        // const uniqueWords = findUnique(words);
-        // const wordColl = [];
-
-        // // setting the count for each
-        // uniqueWords.forEach((d) => {
-        //   wordColl[d] = 0;
-        // });
-
-        // // creating a group for each word
-        // $vis
-        //   .selectAll('.g-word')
-        //   .data(nestedWords)
-        //   .join((enter) =>
-        //     enter.append('g').attr('class', (d) => `g-word g-word__${d}`)
-        //   );
 
         const longData = [];
 
         // convert to long data
         data.forEach((row) => {
+          delete row.ad;
+          delete row.original;
           // loop through each column and for each column make a new row
           Object.keys(row).forEach((colname) => {
-            if (colname === 'title' || colname === 'value') {
+            if (colname === 'title' || colname === 'word') {
               return;
             }
             longData.push({
@@ -150,6 +113,8 @@ d3.selection.prototype.adsChart = function init(options) {
           .nest()
           .key((d) => d.word)
           .entries(longData);
+
+        console.log({ longNest });
 
         // create group for each word
 
@@ -169,7 +134,36 @@ d3.selection.prototype.adsChart = function init(options) {
               .attr('class', (d) => `word word__${d.word}`)
               .attr('data-title', (d) => `${d.title}`)
               .text((d) => d.word)
-          );
+          )
+          .attr('transform', `translate(${width / 2}, ${height / 2})`)
+          .style('fill', 'white')
+          .attr('text-anchor', 'middle');
+
+        // animate in the titles
+        const $titleGroup = $tv.append('g').attr('class', 'g-titles');
+
+        $titleGroup
+          .selectAll('.title')
+          .data(data, (d) => d.title)
+          .join((enter) =>
+            enter
+              .append('text')
+              .attr('class', 'show__title title')
+              .text((d) => d.title)
+              .style('fill', '#FFF')
+          )
+          .attr('text-anchor', 'middle')
+          .attr('transform', `translate(${width / 2}, ${FONT_HEIGHT})`)
+          .attr('opacity', 0)
+          .transition()
+          .on('start', (d) => {
+            revealWords(d.title);
+          })
+          .delay((d, i) => delayTime * i)
+          .attr('opacity', 1)
+          .transition()
+          .delay(transitionTime)
+          .attr('opacity', 0);
 
         return Chart;
       },
