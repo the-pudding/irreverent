@@ -51,20 +51,48 @@ d3.selection.prototype.adsChart = function init(options) {
         return d3.select(n[i]).attr('data-title') === title;
       });
 
-      theseWords
-        .attr('class', 'is-visible')
-        .attr('text-anchor', 'middle')
+      const visibleWords = theseWords
+        .classed('is-visible', true)
+        .attr('text-anchor', 'left')
         .attr(
           'transform',
           (d, i) => `translate(${width * ((i + 1) / 4)}, ${height / 2})`
-        )
+        );
+
+      // find all visible words and count them
+      const allVisible = $vis
+        .selectAll('.is-visible')
+        .data()
+        .map((d) => d.word);
+      const nestedVis = d3
+        .nest()
+        .key((d) => d)
+        .rollup((leaves) => leaves.length)
+        .entries(allVisible)
+        .sort((a, b) => d3.descending(a.value, b.value));
+
+      const scaleKeys = nestedVis.map((d) => d.key);
+
+      scaleX.domain(scaleKeys).range([0, WORD_WIDTH * scaleKeys.length]);
+
+      visibleWords
         .transition()
+        .delay(delayTime / 2)
         .attr('transform', function stackWords(d, i) {
           const check = d3.select(this);
           const index = check.attr('data-index');
-          return `translate(${scaleX(
-            d.word
-          )}, ${height - FONT_HEIGHT * index})`;
+          return `translate(0, ${height - FONT_HEIGHT * index})`;
+        });
+
+      const groups = $vis
+        .selectAll('.g-word')
+        .transition()
+        .delay(delayTime)
+        .attr('transform', (d) => {
+          if (scaleKeys.includes(d.key)) {
+            return `translate(${scaleX(d.key)}, 0)`;
+          }
+          return `translate(0, 0)`;
         });
     }
 
