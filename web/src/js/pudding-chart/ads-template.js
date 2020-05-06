@@ -29,14 +29,15 @@ d3.selection.prototype.adsChart = function init(options) {
     const MARGIN_LEFT = 0;
     const MARGIN_RIGHT = 0;
     const FONT_HEIGHT = 20;
+    const WORD_WIDTH = 70;
 
     // animations
     const transitionTime = 1000;
     const delayTime = 1500;
 
     // scales
-    const scaleX = null;
     const scaleY = null;
+    const scaleX = d3.scaleBand().padding(0.1);
 
     // helper functions
 
@@ -50,13 +51,21 @@ d3.selection.prototype.adsChart = function init(options) {
         return d3.select(n[i]).attr('data-title') === title;
       });
 
-      allWords.attr('opacity', 0);
       theseWords
-        .attr('opacity', 1)
+        .attr('class', 'is-visible')
+        .attr('text-anchor', 'middle')
         .attr(
           'transform',
-          (d, i) => `translate(${width * ((i + 2) / 5)}, ${height / 2})`
-        );
+          (d, i) => `translate(${width * ((i + 1) / 4)}, ${height / 2})`
+        )
+        .transition()
+        .attr('transform', function stackWords(d, i) {
+          const check = d3.select(this);
+          const index = check.attr('data-index');
+          return `translate(${scaleX(
+            d.word
+          )}, ${height - FONT_HEIGHT * index})`;
+        });
     }
 
     const Chart = {
@@ -114,7 +123,12 @@ d3.selection.prototype.adsChart = function init(options) {
           .key((d) => d.word)
           .entries(longData);
 
-        console.log({ longNest });
+        // update x scale domain
+        scaleX
+          .domain(longNest.map((d) => d.key))
+          .range([0, WORD_WIDTH * longNest.length]);
+
+        console.log({ scaleTest: scaleX('exciting') });
 
         // create group for each word
 
@@ -122,7 +136,10 @@ d3.selection.prototype.adsChart = function init(options) {
           .selectAll('.g-word')
           .data(longNest)
           .join((enter) =>
-            enter.append('g').attr('class', (d) => `g-word g-word__${d.key}`)
+            enter
+              .append('g')
+              .attr('class', (d) => `g-word g-word__${d.key}`)
+              .attr('data-visible', 0)
           );
 
         $gWord
@@ -133,6 +150,7 @@ d3.selection.prototype.adsChart = function init(options) {
               .append('text')
               .attr('class', (d) => `word word__${d.word}`)
               .attr('data-title', (d) => `${d.title}`)
+              .attr('data-index', (d, i) => `${i}`)
               .text((d) => d.word)
           )
           .attr('transform', `translate(${width / 2}, ${height / 2})`)
