@@ -4,11 +4,29 @@
     {{/each}}
 
     <fieldset>
-        <legend>{{{doc.quizQ}}}</legend>
-        {{#each doc.options}}
-        <input id={{this.letter}} type='radio' name='definition' value={{this.letter}}>
-        <label for={{this.letter}}>{{this.def}}</label></br>
-        {{/each}}
+        <form>
+            <legend>{{{doc.quizQ}}}</legend>
+
+            {{#each doc.options}}
+            {{#if checked}}
+            <input id={{this.letter}} type='radio' name='definition' value={{this.letter}} checked>
+            <label for={{this.letter}}>{{this.def}}</label></br>
+            {{else}}
+            <input id={{this.letter}} type='radio' name='definition' value={{this.letter}}>
+            <label for={{this.letter}}>{{this.def}}</label></br>
+
+            {{/if}}
+            {{/each}}
+        </form>
     </fieldset>
+
     <button class='submit'>{{doc.quizButton}}</button>
+
+    <div class='quiz__response quiz__response-correct'>
+        <p class='prose'>{{{doc.quizCorrect}}}</p>
+    </div>
+
+    <div class='quiz__response quiz__response-wrong'>
+        <p class='prose'>{{{doc.quizWrong}}}</p>
+    </div>
 </section>

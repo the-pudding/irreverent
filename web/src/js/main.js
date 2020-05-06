@@ -6,6 +6,7 @@ import graphic from './graphic';
 import footer from './footer';
 import common from './common';
 import together from './together';
+import quiz from './quiz';
 
 const $body = d3.select('body');
 let previousWidth = 0;
@@ -48,6 +49,7 @@ function init() {
   footer.init();
   common.init();
   together.init();
+  quiz.init();
 }
 
 init();
