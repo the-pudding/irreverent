@@ -2,11 +2,13 @@
 import debounce from 'lodash.debounce';
 import isMobile from './utils/is-mobile';
 import linkFix from './utils/link-fix';
+import loadData from './load-data';
 import graphic from './graphic';
 import footer from './footer';
 import common from './common';
 import together from './together';
 import quiz from './quiz';
+import ads from './ads';
 
 const $body = d3.select('body');
 let previousWidth = 0;
@@ -34,6 +36,13 @@ function setupStickyHeader() {
   }
 }
 
+function loadShowData() {
+  return new Promise((resolve, reject) => {
+    const data = loadData('shows.csv');
+    resolve(data);
+  });
+}
+
 function init() {
   // adds rel="noopener" to all target="_blank" links
   linkFix();
@@ -50,6 +59,7 @@ function init() {
   common.init();
   together.init();
   quiz.init();
+  loadShowData().then((response) => ads.init(response));
 }
 
 init();
