@@ -40,6 +40,10 @@ d3.selection.prototype.adsChart = function init(options) {
 
     // helper functions
 
+    function findUnique(arr) {
+      return [...new Set(arr)];
+    }
+
     const Chart = {
       // called once at start
       init() {
@@ -69,8 +73,8 @@ d3.selection.prototype.adsChart = function init(options) {
       render() {
         // offset chart for margins
         $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
-        console.log({ data });
 
+        // animate in the titles
         const $titleGroup = $tv.append('g').attr('class', 'g-titles');
 
         $titleGroup
@@ -92,6 +96,80 @@ d3.selection.prototype.adsChart = function init(options) {
           .transition()
           .delay(transitionTime)
           .attr('opacity', 0);
+
+        // add the descriptive words
+
+        // first, figure out all the possible unique words
+        // const words = data
+        //   .map((d) => {
+        //     return { words: [d.word1, d.word2, d.word3] };
+        //   })
+        //   .map((d) => d.words)
+        //   .flat();
+
+        // const nestedWords = d3
+        //   .nest()
+        //   .key((d) => d)
+        //   .entries(words);
+
+        // console.log({ nestedWords });
+
+        // const uniqueWords = findUnique(words);
+        // const wordColl = [];
+
+        // // setting the count for each
+        // uniqueWords.forEach((d) => {
+        //   wordColl[d] = 0;
+        // });
+
+        // // creating a group for each word
+        // $vis
+        //   .selectAll('.g-word')
+        //   .data(nestedWords)
+        //   .join((enter) =>
+        //     enter.append('g').attr('class', (d) => `g-word g-word__${d}`)
+        //   );
+
+        const longData = [];
+
+        // convert to long data
+        data.forEach((row) => {
+          // loop through each column and for each column make a new row
+          Object.keys(row).forEach((colname) => {
+            if (colname === 'title' || colname === 'value') {
+              return;
+            }
+            longData.push({
+              title: row.title,
+              word: row[colname],
+            });
+          });
+        });
+
+        const longNest = d3
+          .nest()
+          .key((d) => d.word)
+          .entries(longData);
+
+        // create group for each word
+
+        const $gWord = $vis
+          .selectAll('.g-word')
+          .data(longNest)
+          .join((enter) =>
+            enter.append('g').attr('class', (d) => `g-word g-word__${d.key}`)
+          );
+
+        $gWord
+          .selectAll('.word')
+          .data((d) => d.values)
+          .join((enter) =>
+            enter
+              .append('text')
+              .attr('class', (d) => `word word__${d.word}`)
+              .attr('data-title', (d) => `${d.title}`)
+              .text((d) => d.word)
+          );
 
         return Chart;
       },
