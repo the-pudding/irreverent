@@ -78,7 +78,7 @@ d3.selection.prototype.adsChart = function init(options) {
           const parent = d3.select(this.parentNode).node();
           const parentPos = parent.getBoundingClientRect();
           const parentX = parentPos.x;
-          const preferredLoc = (width * (i + 2)) / 5;
+          const preferredLoc = (width * (i + 1)) / 4;
           const dif = preferredLoc - parentX;
           const y = -height / 2 - PADDING * 2;
           return `translate(${dif}, ${y})`;

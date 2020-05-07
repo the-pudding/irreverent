@@ -1,4 +1,5 @@
 import './pudding-chart/ads-template';
+import EnterView from 'enter-view';
 import pauseSvg from './pauseSvg';
 import playSvg from './playSvg';
 
@@ -16,8 +17,7 @@ function resize() {}
 
 function setupChart() {
   chart = $figure.data([data]).adsChart();
-
-  chart.resize().render();
+  chart.resize();
 }
 
 function setupButtons() {
@@ -38,11 +38,23 @@ function setupButtons() {
   $replay.on('click', () => chart.replay());
 }
 
+function setupEnterView() {
+  EnterView({
+    selector: '.ads .figure__inner',
+    enter(el) {
+      chart.resize().render();
+    },
+    offset: 0.5,
+    once: true,
+  });
+}
+
 function init(res) {
   data = res.filter((d) => d.ad === 'yes');
   console.log({ data, res });
   setupChart();
   setupButtons();
+  setupEnterView();
 }
 
 export default { init, resize };
