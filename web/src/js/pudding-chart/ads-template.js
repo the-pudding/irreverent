@@ -32,8 +32,10 @@ d3.selection.prototype.adsChart = function init(options) {
     const WORD_WIDTH = 70;
 
     // animations
-    const transitionTime = 1000;
-    const delayTime = 3000;
+    const changeTitles = 3000;
+    const fadeTitles = 2000;
+    const moveWords = 500;
+    const moveWordGroups = 1500;
 
     // scales
     const scaleY = null;
@@ -45,22 +47,51 @@ d3.selection.prototype.adsChart = function init(options) {
       return [...new Set(arr)];
     }
 
+    function findParentX(el) {
+      const parent = d3.select(this.parentNode).node();
+      const parentPos = parent.getBoundingClientRect();
+      return parentPos.x;
+    }
+
     function revealWords(title) {
       const allWords = $vis.selectAll('.word');
       const theseWords = allWords.filter((d, i, n) => {
         return d3.select(n[i]).attr('data-title') === title;
       });
 
+      // find parent coordinates
+      //   theseWords.each(function (d) {
+      //     const parent = d3.select(this.parentNode).node();
+      //     const parentPos = parent.getBoundingClientRect();
+      //     console.log({ parentPos });
+      //   });
+
       const visibleWords = theseWords
         .classed('is-visible', true)
-        .attr('text-anchor', 'left')
-        .attr('x', (d, i) => {
-          return (width * (i + 1)) / 4;
+        // .attr('transform', function stackWords(d, i) {
+        //   const check = d3.select(this);
+        //   const index = check.attr('data-index');
+        //   return `translate(0, ${height / 2 - FONT_HEIGHT * index})`;
+        // });
+        // .attr('text-anchor', 'left')
+        // // .attr('x', (d, i) => {
+        // //   return (width * (i + 1)) / 4;
+        // // })
+        // // .attr('y', height / 2)
+        // .attr(
+        //   'transform',
+        //   (d, i) => `translate(${(width * (i + 1)) / 4}, ${height / 2})`
+        // )
+        // .transition()
+        // .delay(moveWords)
+        // // .attr('x', 0)
+        .attr('x', function (d, i) {
+          const parentX = findParentX(d);
+          const preferredLoc = (width * (i + 1)) / 4;
+          return Math.abs(preferredLoc - parentX);
         })
-        .attr('y', 0)
+        .attr('y', -height / 2)
         .transition()
-        .delay(delayTime / 2)
-        .attr('x', 0)
         .attr('y', function stackWords() {
           const check = d3.select(this);
           const index = check.attr('data-index');
@@ -72,6 +103,37 @@ d3.selection.prototype.adsChart = function init(options) {
       //   return `translate(0, ${height - FONT_HEIGHT * index})`;
       // });
 
+      //   const allVisible = $vis
+      //     .selectAll('.is-visible')
+      //     .data()
+      //     .map((d) => d.word);
+      //   const nestedVis = d3
+      //     .nest()
+      //     .key((d) => d)
+      //     .rollup((leaves) => leaves.length)
+      //     .entries(allVisible)
+      //     .sort((a, b) => d3.descending(a.value, b.value));
+
+      //   const scaleKeys = nestedVis.map((d) => d.key);
+
+      //   scaleX.domain(scaleKeys).range([0, WORD_WIDTH * scaleKeys.length]);
+
+      //   $vis
+      //     .selectAll('.is-visible')
+      // .attr('x', (d) => scaleX(d.word))
+      // .attr('y', function stackWords() {
+      //   const check = d3.select(this);
+      //   const index = check.attr('data-index');
+      //   return -FONT_HEIGHT * index;
+      // });
+      //   .attr('transform', function stackWords(d, i) {
+      //     const check = d3.select(this);
+      //     const index = check.attr('data-index');
+      //     return `translate(0, ${height - FONT_HEIGHT * index})`;
+      //   });
+    }
+
+    function moveGroups() {
       // find all visible words and count them
       const allVisible = $vis
         .selectAll('.is-visible')
@@ -88,17 +150,15 @@ d3.selection.prototype.adsChart = function init(options) {
 
       scaleX.domain(scaleKeys).range([0, WORD_WIDTH * scaleKeys.length]);
 
-      visibleWords;
-
       const groups = $vis
         .selectAll('.g-word')
         .transition()
-        .delay(delayTime)
+        .delay(1000)
         .attr('transform', (d) => {
           if (scaleKeys.includes(d.key)) {
             return `translate(${scaleX(d.key)}, ${height})`;
           }
-          return `translate(0, ${height})`;
+          return `translate(${width}, ${height})`;
         });
     }
 
@@ -130,7 +190,7 @@ d3.selection.prototype.adsChart = function init(options) {
       // update scales and render chart
       render() {
         // offset chart for margins
-        // $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
+        $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
 
         // add the descriptive words
 
@@ -171,8 +231,10 @@ d3.selection.prototype.adsChart = function init(options) {
           .data(longNest)
           .join((enter) =>
             enter.append('g').attr('class', (d) => `g-word g-word__${d.key}`)
-          )
-          .attr('transform', `translate(${width / 2}, ${height})`);
+          );
+        // .attr('transform', `translate(${width / 2}, ${height})`)
+        //   .attr('height', height)
+        //   .attr('width', width);
 
         $gWord
           .selectAll('.word')
@@ -187,9 +249,9 @@ d3.selection.prototype.adsChart = function init(options) {
           )
           // .attr('transform', `translate(${width / 2}, ${height / 2})`)
           .style('fill', 'white')
-          .attr('text-anchor', 'middle')
-          .attr('x', width / 2)
-          .attr('y', height / 2);
+          .attr('text-anchor', 'middle');
+        //   .attr('x', width / 2)
+        //   .attr('y', height / 2);
 
         // animate in the titles
         const $titleGroup = $tv.append('g').attr('class', 'g-titles');
@@ -211,10 +273,13 @@ d3.selection.prototype.adsChart = function init(options) {
           .on('start', (d) => {
             revealWords(d.title);
           })
-          .delay((d, i) => delayTime * i)
+          .delay((d, i) => changeTitles * i)
           .attr('opacity', 1)
           .transition()
-          .delay(transitionTime)
+          .on('start', (d) => {
+            moveGroups();
+          })
+          .delay(fadeTitles)
           .attr('opacity', 0);
 
         return Chart;
