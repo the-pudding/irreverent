@@ -14,7 +14,7 @@ d3.selection.prototype.adsChart = function init(options) {
     // dom elements
     const $chart = d3.select(el);
     let $svg = null;
-    let $axis = null;
+    const $axis = null;
     let $vis = null;
     let $tv = null;
 
@@ -30,6 +30,7 @@ d3.selection.prototype.adsChart = function init(options) {
     const MARGIN_RIGHT = 0;
     const FONT_HEIGHT = 20;
     const WORD_WIDTH = 80;
+    const PADDING = 16;
 
     // animations
     const changeTitles = 3000;
@@ -47,8 +48,12 @@ d3.selection.prototype.adsChart = function init(options) {
       return [...new Set(arr)];
     }
 
-    function findParentX(el) {
-      return parentPos.x;
+    function addTV() {
+      $tv
+        .append('image')
+        .attr('xlink:href', 'assets/images/tv.png')
+        .attr('width', 463)
+        .attr('height', 266);
     }
 
     function revealWords(title) {
@@ -57,32 +62,8 @@ d3.selection.prototype.adsChart = function init(options) {
         return d3.select(n[i]).attr('data-title') === title;
       });
 
-      // find parent coordinates
-      //   theseWords.each(function (d) {
-      //     const parent = d3.select(this.parentNode).node();
-      //     const parentPos = parent.getBoundingClientRect();
-      //     console.log({ parentPos });
-      //   });
-
       const visibleWords = theseWords
         .classed('is-visible', true)
-        // .attr('transform', function stackWords(d, i) {
-        //   const check = d3.select(this);
-        //   const index = check.attr('data-index');
-        //   return `translate(0, ${height / 2 - FONT_HEIGHT * index})`;
-        // });
-        // .attr('text-anchor', 'left')
-        // // .attr('x', (d, i) => {
-        // //   return (width * (i + 1)) / 4;
-        // // })
-        // // .attr('y', height / 2)
-        // .attr(
-        //   'transform',
-        //   (d, i) => `translate(${(width * (i + 1)) / 4}, ${height / 2})`
-        // )
-        // .transition()
-        // .delay(moveWords)
-        // // .attr('x', 0)
         .attr('x', function (d, i) {
           const parent = d3.select(this.parentNode).node();
           const parentPos = parent.getBoundingClientRect();
@@ -92,7 +73,7 @@ d3.selection.prototype.adsChart = function init(options) {
 
           return dif;
         })
-        .attr('y', -height / 2)
+        .attr('y', -height / 2 - PADDING * 2)
         .transition()
         .delay(1000)
         .attr('x', 0)
@@ -101,40 +82,6 @@ d3.selection.prototype.adsChart = function init(options) {
           const index = check.attr('data-index');
           return -FONT_HEIGHT * index;
         });
-      // .attr('transform', function stackWords(d, i) {
-      //   const check = d3.select(this);
-      //   const index = check.attr('data-index');
-      //   return `translate(0, ${height - FONT_HEIGHT * index})`;
-      // });
-
-      //   const allVisible = $vis
-      //     .selectAll('.is-visible')
-      //     .data()
-      //     .map((d) => d.word);
-      //   const nestedVis = d3
-      //     .nest()
-      //     .key((d) => d)
-      //     .rollup((leaves) => leaves.length)
-      //     .entries(allVisible)
-      //     .sort((a, b) => d3.descending(a.value, b.value));
-
-      //   const scaleKeys = nestedVis.map((d) => d.key);
-
-      //   scaleX.domain(scaleKeys).range([0, WORD_WIDTH * scaleKeys.length]);
-
-      //   $vis
-      //     .selectAll('.is-visible')
-      // .attr('x', (d) => scaleX(d.word))
-      // .attr('y', function stackWords() {
-      //   const check = d3.select(this);
-      //   const index = check.attr('data-index');
-      //   return -FONT_HEIGHT * index;
-      // });
-      //   .attr('transform', function stackWords(d, i) {
-      //     const check = d3.select(this);
-      //     const index = check.attr('data-index');
-      //     return `translate(0, ${height - FONT_HEIGHT * index})`;
-      //   });
     }
 
     function moveGroups() {
@@ -178,16 +125,14 @@ d3.selection.prototype.adsChart = function init(options) {
       // called once at start
       init() {
         $svg = $chart.append('svg').attr('class', 'pudding-chart');
-
-        // create axis
-        $axis = $svg.append('g').attr('class', 'g-axis');
-
-        // setup viz group
-        $vis = $svg.append('g').attr('class', 'g-vis');
-
         // setup tv
         $tv = $svg.append('g').attr('class', 'g-tv');
         $tv.append('rect').attr('class', 'tv-outline');
+
+        addTV();
+
+        // setup viz group
+        $vis = $svg.append('g').attr('class', 'g-vis');
       },
       // on resize, update new dimensions
       resize() {
@@ -197,6 +142,8 @@ d3.selection.prototype.adsChart = function init(options) {
         $svg
           .attr('width', width + MARGIN_LEFT + MARGIN_RIGHT)
           .attr('height', height + MARGIN_TOP + MARGIN_BOTTOM);
+
+        $tv.select('image').attr('x', width / 2 - 463 / 2);
         return Chart;
       },
       // update scales and render chart
@@ -237,12 +184,6 @@ d3.selection.prototype.adsChart = function init(options) {
           .domain(longNest.map((d) => d.key))
           .range([MARGIN_LEFT, WORD_WIDTH * longNest.length]);
 
-        console.log({
-          scaleTest: scaleX('suspenseful'),
-          firstSeveral,
-          longNest,
-        });
-
         // create group for each word
 
         const $gWord = $vis
@@ -266,11 +207,8 @@ d3.selection.prototype.adsChart = function init(options) {
               .attr('data-index', (d, i) => `${i}`)
               .text((d) => d.word)
           )
-          // .attr('transform', `translate(${width / 2}, ${height / 2})`)
           .style('fill', 'white')
           .attr('text-anchor', 'middle');
-        //   .attr('x', width / 2)
-        //   .attr('y', height / 2);
 
         // animate in the titles
         const $titleGroup = $tv.append('g').attr('class', 'g-titles');
@@ -286,7 +224,10 @@ d3.selection.prototype.adsChart = function init(options) {
               .style('fill', '#FFF')
           )
           .attr('text-anchor', 'middle')
-          .attr('transform', `translate(${width / 2}, ${FONT_HEIGHT})`)
+          .attr(
+            'transform',
+            `translate(${width / 2}, ${FONT_HEIGHT + PADDING})`
+          )
           .attr('opacity', 0)
           .transition()
           .on('start', (d) => {
