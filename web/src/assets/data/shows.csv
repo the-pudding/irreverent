@@ -6,42 +6,42 @@
 "Shameless","raunchy","irreverent","dramedy","no","yes","shameless"
 "Ozark","ominous","slow burn","dark","yes","yes","ozark"
 "Virgin River","heartfelt","intimate","emotional","yes","yes","virgin_river"
-"Mr. Right","quirky","forceful","exciting","no","yes",NA
-"Legacies","campy","slick","fantasy tv","no","yes",NA
-"Grey's Anatomy","soapy","emotional","romantic","no","yes",NA
-"That 70's Show","goofy","sitcom","comedy","no","yes",NA
-"I am not okay with this","cynical","irreverent","dark comedy","yes","yes",NA
-"Derry Girls","witty","quirky","irreverent","yes","yes",NA
-"Unorthodox","intimate","emotional","drama","yes","yes",NA
-"All American","inspiring","teen","drama","no","yes",NA
-"Feel Good","witty","irreverent","intimate","yes","yes",NA
-"Anne with an ""E""","heartfelt","emotional","teen","yes","yes",NA
-"Kim's Convenience","sitcom","comedy","ensemble","no","yes",NA
-"Arrested Development","deadpan","witty","quirky","no","yes",NA
-"Tiger King","riveting","provocative","investigative","yes","yes",NA
-"Taylor Tomlinson Quarter-Lie Crisis","witty","irreverent","stand-up","yes","yes",NA
-"Young & Hungry","sitcom","comedy","opposites-attract","no","yes",NA
-"100 Humans","provocative","witty","quirky","yes","yes",NA
-"Good Girls","witty","irreverent","suspenseful","no","yes",NA
-"the Big Show show","feel-good","goofy","sitcom","yes","yes",NA
-"Locke & Key","mind-bending","witty","irreverent","yes","yes",NA
-"Life As We Know It","heartfelt","romantic","dramedy","no","yes",NA
-"Love is Blind","romantic","reality tv","wedding & romances","yes","yes",NA
-"Once Upon a Time","exciting","fantasy tv","drama","no","yes",NA
-"The Perks of Being a Wallflower","heartfelt","dramedy","hidden gem","no","yes",NA
-"The Invention of Lying","irreverent","romantic","comedy","no","yes",NA
-"Parks & Recreation","witty","quirky","goofy","no","yes",NA
-"Merlin","exciting","suspenseful","fantasy tv","no","yes",NA
-"Royal Pains","dramedy","comedy","drama","no","yes",NA
-"Love Wedding Repeat","heartfelt","witty","romantic","yes","yes",NA
-"The Circle","scandalous","soapy","reality tv","yes","yes",NA
-"Community","witty","irreverent","sitcom","no","yes",NA
-"The Great British Baking Show","relaxing","feel-good","reality tv","yes","yes",NA
-"Altered Carbon","mind-bending","dystopian","violent","yes","yes",NA
-"Code 8","dystopian","gritty","exciting","no","yes",NA
-"Outer Banks","soapy","exciting","teen","yes","yes",NA
-"Brews Brothers","raunchy","irreverent","sitcom","yes","yes",NA
-"Nailed It!","quirky","reality tv","competition","yes","yes",NA
+"Mr. Right","quirky","forceful","exciting","no","yes","mr_right"
+"Legacies","campy","slick","fantasy tv","no","yes","legacies"
+"Grey's Anatomy","soapy","emotional","romantic","no","yes","greys_anatomy"
+"That 70's Show","goofy","sitcom","comedy","no","yes","that_70s_show"
+"I am Not Okay With This","cynical","irreverent","dark comedy","yes","yes","i_am_not_ok"
+"Derry Girls","witty","quirky","irreverent","yes","yes","derry_girls"
+"Unorthodox","intimate","emotional","drama","yes","yes","unorthodox"
+"All American","inspiring","teen","drama","no","yes","all_american"
+"Feel Good","witty","irreverent","intimate","yes","yes","feel_good"
+"Anne with an ""E""","heartfelt","emotional","teen","yes","yes","anne_with_an_e"
+"Kim's Convenience","sitcom","comedy","ensemble","no","yes","kims_convenience"
+"Arrested Development","deadpan","witty","quirky","no","yes","arrested_development"
+"Tiger King","riveting","provocative","investigative","yes","yes","tiger_king"
+"Taylor Tomlinson Quarter-Life Crisis","witty","irreverent","stand-up","yes","yes","taylor_tomlinson"
+"Young & Hungry","sitcom","comedy","opposites-attract","no","yes","young_hungry"
+"100 Humans","provocative","witty","quirky","yes","yes","100_humans"
+"Good Girls","witty","irreverent","suspenseful","no","yes","good_girls"
+"the Big Show show","feel-good","goofy","sitcom","yes","yes","the_big_show_show"
+"Locke & Key","mind-bending","witty","irreverent","yes","yes","locke_and_key"
+"Life As We Know It","heartfelt","romantic","dramedy","no","yes","life_as_we_know_it"
+"Love is Blind","romantic","reality tv","wedding & romances","yes","yes","love_is_blind"
+"Once Upon a Time","exciting","fantasy tv","drama","no","yes","once_upon_a_time"
+"The Perks of Being a Wallflower","heartfelt","dramedy","hidden gem","no","yes","perks_of_being"
+"The Invention of Lying","irreverent","romantic","comedy","no","yes","invention_of_lying"
+"Parks & Recreation","witty","quirky","goofy","no","yes","parks_and_rec"
+"Merlin","exciting","suspenseful","fantasy tv","no","yes","merlin"
+"Royal Pains","dramedy","comedy","drama","no","yes","royal_pains"
+"Love Wedding Repeat","heartfelt","witty","romantic","yes","yes","love_wedding_repeat"
+"The Circle","scandalous","soapy","reality tv","yes","yes","the_circle"
+"Community","witty","irreverent","sitcom","no","yes","community"
+"The Great British Baking Show","relaxing","feel-good","reality tv","yes","yes","great_british_baking_show"
+"Altered Carbon","mind-bending","dystopian","violent","yes","yes","altered_carbon"
+"Code 8","dystopian","gritty","exciting","no","yes","code_8"
+"Outer Banks","soapy","exciting","teen","yes","yes","outer_banks"
+"Brews Brothers","raunchy","irreverent","sitcom","yes","yes","brews_brothers"
+"Nailed It!","quirky","reality tv","competition","yes","yes","nailed_it"
 "#blackAF","slick","witty","irreverent","yes","no",NA
 "On My Block","witty","emotional","romantic","yes","no",NA
 "The Office","witty","irreverent","sitcom","no","no",NA

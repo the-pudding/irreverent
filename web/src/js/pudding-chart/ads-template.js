@@ -33,9 +33,9 @@ d3.selection.prototype.adsChart = function init(options) {
     const PADDING = 16;
 
     // animations
-    const changeTitles = 3000;
-    const fadeTitles = 2000;
-    const moveWords = 500;
+    let changeTitles = 3000;
+    let fadeTitles = 2000;
+    let moveWords = 1000;
     const moveWordGroups = 1500;
 
     // scales
@@ -81,29 +81,14 @@ d3.selection.prototype.adsChart = function init(options) {
           const y = -height / 2 - PADDING * 2;
           return `translate(${dif}, ${y})`;
         })
-        // .attr('x', function (d, i) {
-        //   const parent = d3.select(this.parentNode).node();
-        //   const parentPos = parent.getBoundingClientRect();
-        //   const parentX = parentPos.x;
-        //   const preferredLoc = (width * (i + 2)) / 5;
-        //   const dif = preferredLoc - parentX;
 
-        //   return dif;
-        // })
-        // .attr('y', -height / 2 - PADDING * 2)
         .transition()
-        .delay(1000)
+        .delay(moveWords)
         .attr('transform', function () {
           const check = d3.select(this);
           const index = check.attr('data-index');
           return `translate(0, ${-FONT_HEIGHT * index})`;
         });
-      // .attr('x', 0)
-      // .attr('y', function stackWords() {
-      //   const check = d3.select(this);
-      //   const index = check.attr('data-index');
-      //   return -FONT_HEIGHT * index;
-      // });
     }
 
     function moveGroups() {
@@ -141,6 +126,29 @@ d3.selection.prototype.adsChart = function init(options) {
         .attr('transform', (d) => {
           return `translate(${scaleX(d.key)}, ${height})`;
         });
+    }
+
+    function cycleTitles() {
+      d3.selectAll('.title-container')
+        .transition()
+        .on('start', (d) => {
+          revealWords(d.title);
+
+          $tv
+            .select('.show')
+            .attr('xlink:href', `assets/images/${d.img}.jpg`)
+            .transition()
+            .attr('opacity', 1);
+        })
+        .delay((d, i) => changeTitles * i)
+        .attr('opacity', 1)
+        .transition()
+        .on('start', (d) => {
+          moveGroups();
+          $tv.select('.show').transition().attr('opacity', 0);
+        })
+        .delay(fadeTitles)
+        .attr('opacity', 0);
     }
 
     const Chart = {
@@ -201,15 +209,10 @@ d3.selection.prototype.adsChart = function init(options) {
           });
         });
 
-        console.log({ longData });
-
         const longNest = d3
           .nest()
           .key((d) => d.word)
           .entries(longData);
-
-        // set x location of first several groups
-        const firstSeveral = findUnique(longData.map((d) => d.word));
 
         // update x scale domain
         scaleX
@@ -225,8 +228,6 @@ d3.selection.prototype.adsChart = function init(options) {
             enter.append('g').attr('class', (d) => `g-word g-word__${d.key}`)
           )
           .attr('transform', (d) => `translate(${scaleX(d.key)}, ${height})`);
-        //   .attr('height', height)
-        //   .attr('width', width);
 
         $gWord
           .selectAll('.word')
@@ -263,38 +264,57 @@ d3.selection.prototype.adsChart = function init(options) {
         $titleGroup
           .selectAll('.title')
           .data(data, (d) => d.title)
-          .join((enter) =>
-            enter
+          .join((enter) => {
+            const group = enter.append('g').attr('class', 'title-container');
+            group
+              .append('text')
+              .attr('class', 'show__title-bg title')
+              .text((d) => d.title)
+              .attr('text-anchor', 'middle');
+
+            group
               .append('text')
               .attr('class', 'show__title title')
               .text((d) => d.title)
               .style('fill', '#FFF')
-          )
-          .attr('text-anchor', 'middle')
+              .attr('text-anchor', 'middle');
+
+            return group;
+          })
+
           .attr(
             'transform',
             `translate(${width / 2}, ${FONT_HEIGHT + PADDING})`
           )
-          .attr('opacity', 0)
-          .transition()
-          .on('start', (d) => {
-            revealWords(d.title);
-            console.log({ d });
-            $tv
-              .select('.show')
-              .attr('xlink:href', `assets/images/${d.img}.jpg`);
-          })
-          .delay((d, i) => changeTitles * i)
-          .attr('opacity', 1)
-          .transition()
-          .on('start', (d) => {
-            moveGroups();
-          })
-          .delay(fadeTitles)
           .attr('opacity', 0);
+
+        cycleTitles();
 
         return Chart;
       },
+      ff() {
+        // speed up all transitions to be double speed
+        console.log('ff');
+        // interrupt current transition
+        $tv.selectAll('.title').transition().duration(0);
+
+        // set new values
+        changeTitles = 1500;
+        fadeTitles = 1000;
+        moveWords = 500;
+
+        // start over
+        cycleTitles();
+      },
+      pause() {
+        // interrupt current transition
+        $tv.selectAll('*').interrupt();
+        // $vis.selectAll('.word-container').transition().duration(0);
+        // $vis.selectAll('.g-word').transition().duration(0);
+        // $tv.select('.show').transition().duration(0);
+        console.log('pause');
+      },
+      replay() {},
       // get / set data
       data(val) {
         if (!arguments.length) return data;
