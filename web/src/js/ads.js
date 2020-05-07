@@ -1,4 +1,6 @@
 import './pudding-chart/ads-template';
+import pauseSvg from './pauseSvg';
+import playSvg from './playSvg';
 
 let data = [];
 
@@ -21,7 +23,18 @@ function setupChart() {
 function setupButtons() {
   console.log({ $ff });
   $ff.on('click', () => chart.ff());
-  $pause.on('click', () => chart.pause());
+  $pause.on('click', function () {
+    const state = d3.select(this).attr('data-state');
+    if (state === 'playing') {
+      $pause.attr('data-state', 'paused');
+      chart.pause();
+      $pause.html(`${playSvg}`);
+    } else {
+      $pause.attr('data-state', 'playing');
+      chart.play();
+      $pause.html(`${pauseSvg}`);
+    }
+  });
   $replay.on('click', () => chart.replay());
 }
 

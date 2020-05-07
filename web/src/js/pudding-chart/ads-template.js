@@ -32,6 +32,8 @@ d3.selection.prototype.adsChart = function init(options) {
     const WORD_WIDTH = 80;
     const PADDING = 16;
 
+    let titleIndex = 0;
+
     // animations
     let changeTitles = 3000;
     let fadeTitles = 2000;
@@ -128,10 +130,13 @@ d3.selection.prototype.adsChart = function init(options) {
         });
     }
 
-    function cycleTitles() {
-      d3.selectAll('.title-container')
-        .transition()
+    function cycleTitles(sel) {
+      sel
+        .transition('showTitles')
         .on('start', (d) => {
+          // increase the title index
+          titleIndex += 1;
+          console.log({ titleIndex });
           revealWords(d.title);
 
           $tv
@@ -140,9 +145,13 @@ d3.selection.prototype.adsChart = function init(options) {
             .transition()
             .attr('opacity', 1);
         })
+        .on('cancel', function (d) {
+          // when the animation is interrupted
+          $tv.selectAll('.title-container').attr('opacity', 0);
+        })
         .delay((d, i) => changeTitles * i)
         .attr('opacity', 1)
-        .transition()
+        .transition('removeTitles')
         .on('start', (d) => {
           moveGroups();
           $tv.select('.show').transition().attr('opacity', 0);
@@ -288,7 +297,7 @@ d3.selection.prototype.adsChart = function init(options) {
           )
           .attr('opacity', 0);
 
-        cycleTitles();
+        cycleTitles(d3.selectAll('.title-container'));
 
         return Chart;
       },
@@ -296,7 +305,7 @@ d3.selection.prototype.adsChart = function init(options) {
         // speed up all transitions to be double speed
         console.log('ff');
         // interrupt current transition
-        $tv.selectAll('.title').transition().duration(0);
+        $tv.selectAll('*').interrupt();
 
         // set new values
         changeTitles = 1500;
@@ -304,17 +313,36 @@ d3.selection.prototype.adsChart = function init(options) {
         moveWords = 500;
 
         // start over
-        cycleTitles();
+        // const allTitles = $tv.selectAll('.title-container');
+        // cycleTitles(allTitles);
+        Chart.play();
+      },
+      play() {
+        const remaining = $tv
+          .selectAll('.title-container')
+          .filter((d, i) => i >= titleIndex);
+
+        cycleTitles(remaining);
       },
       pause() {
         // interrupt current transition
-        $tv.selectAll('*').interrupt();
+        $tv
+          .selectAll('.title-container')
+          .interrupt('showTitles')
+          .selectAll('*')
+          .interrupt();
+
         // $vis.selectAll('.word-container').transition().duration(0);
         // $vis.selectAll('.g-word').transition().duration(0);
         // $tv.select('.show').transition().duration(0);
         console.log('pause');
       },
-      replay() {},
+      replay() {
+        titleIndex = 0;
+        Chart.pause();
+        const all = $tv.selectAll('.title-container');
+        cycleTitles(all);
+      },
       // get / set data
       data(val) {
         if (!arguments.length) return data;
