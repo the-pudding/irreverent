@@ -65,36 +65,50 @@ d3.selection.prototype.adsChart = function init(options) {
     }
 
     function revealWords(title) {
-      const allWords = $vis.selectAll('.word');
+      const allWords = $vis.selectAll('.word-container');
       const theseWords = allWords.filter((d, i, n) => {
         return d3.select(n[i]).attr('data-title') === title;
       });
 
       const visibleWords = theseWords
         .classed('is-visible', true)
-        .attr('x', function (d, i) {
+        .attr('transform', function (d, i) {
           const parent = d3.select(this.parentNode).node();
           const parentPos = parent.getBoundingClientRect();
           const parentX = parentPos.x;
           const preferredLoc = (width * (i + 2)) / 5;
           const dif = preferredLoc - parentX;
-
-          return dif;
+          const y = -height / 2 - PADDING * 2;
+          return `translate(${dif}, ${y})`;
         })
-        .attr('y', -height / 2 - PADDING * 2)
+        // .attr('x', function (d, i) {
+        //   const parent = d3.select(this.parentNode).node();
+        //   const parentPos = parent.getBoundingClientRect();
+        //   const parentX = parentPos.x;
+        //   const preferredLoc = (width * (i + 2)) / 5;
+        //   const dif = preferredLoc - parentX;
+
+        //   return dif;
+        // })
+        // .attr('y', -height / 2 - PADDING * 2)
         .transition()
         .delay(1000)
-        .attr('x', 0)
-        .attr('y', function stackWords() {
+        .attr('transform', function () {
           const check = d3.select(this);
           const index = check.attr('data-index');
-          return -FONT_HEIGHT * index;
+          return `translate(0, ${-FONT_HEIGHT * index})`;
         });
+      // .attr('x', 0)
+      // .attr('y', function stackWords() {
+      //   const check = d3.select(this);
+      //   const index = check.attr('data-index');
+      //   return -FONT_HEIGHT * index;
+      // });
     }
 
     function moveGroups() {
       const allGroups = $vis
-        .selectAll('.word')
+        .selectAll('.word-container')
         .data()
         .map((d) => d.word);
 
@@ -169,9 +183,6 @@ d3.selection.prototype.adsChart = function init(options) {
 
         // convert to long data
         data.forEach((row) => {
-          //   delete row.ad;
-          //   delete row.original;
-          //   delete row.img;
           // loop through each column and for each column make a new row
           Object.keys(row).forEach((colname) => {
             if (
@@ -220,16 +231,31 @@ d3.selection.prototype.adsChart = function init(options) {
         $gWord
           .selectAll('.word')
           .data((d) => d.values)
-          .join((enter) =>
-            enter
+          .join((enter) => {
+            const group = enter
+              .append('g')
+              .attr('class', `word-container`)
+              .attr('data-title', (d) => `${d.title}`)
+              .attr('data-index', (d, i) => `${i}`);
+
+            group
+              .append('rect')
+              .attr('class', 'word-bg')
+              .attr('x', -WORD_WIDTH / 2)
+              .attr('y', 0)
+              .attr('width', WORD_WIDTH)
+              .attr('height', FONT_HEIGHT);
+
+            group
               .append('text')
               .attr('class', (d) => `word word__${d.word}`)
               .attr('data-title', (d) => `${d.title}`)
               .attr('data-index', (d, i) => `${i}`)
               .text((d) => d.word)
-          )
-          .style('fill', 'white')
-          .attr('text-anchor', 'middle');
+              .style('fill', 'white')
+              .attr('text-anchor', 'middle')
+              .attr('alignment-baseline', 'hanging');
+          });
 
         // animate in the titles
         const $titleGroup = $tv.append('g').attr('class', 'g-titles');
