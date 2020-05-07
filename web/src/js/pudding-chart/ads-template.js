@@ -342,6 +342,7 @@ d3.selection.prototype.adsChart = function init(options) {
         Chart.pause();
         const all = $tv.selectAll('.title-container');
         cycleTitles(all);
+        $vis.selectAll('.word-container').classed('is-visible', false);
       },
       // get / set data
       data(val) {
