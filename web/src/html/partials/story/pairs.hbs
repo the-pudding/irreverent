@@ -1,0 +1,17 @@
+<section class='together'>
+    {{#each doc.preTogether}}
+    <p class='prose'>{{{value}}}</p>
+    {{/each}}
+
+    <div class='together__figure'>
+        <div class='together__meta meta'>
+            <h3 class='figure-title'>{{{doc.togetherTitle}}}</h3>
+            <p class='figure-sub'>{{{doc.togetherSub}}}</p>
+            <div class='figure-legend'>
+                <p class='legend__text'>{{{doc.togetherLegend}}}</p>
+            </div>
+        </div>
+        <table class='together-table'>
+        </table>
+    </div>
+</section>

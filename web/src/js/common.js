@@ -42,7 +42,6 @@ function init() {
   loadData('common.csv')
     .then((result) => {
       data = cleanData(result);
-      console.log({ data });
       generateWordGroups();
     })
     .catch(console.error);

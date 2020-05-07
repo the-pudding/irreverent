@@ -6,9 +6,10 @@ import loadData from './load-data';
 import graphic from './graphic';
 import footer from './footer';
 import common from './common';
-import together from './together';
+// import together from './together';
 import quiz from './quiz';
 import ads from './ads';
+import pairs from './pairs';
 
 const $body = d3.select('body');
 let previousWidth = 0;
@@ -57,9 +58,12 @@ function init() {
   // load footer stories
   footer.init();
   common.init();
-  together.init();
+  // together.init();
   quiz.init();
-  loadShowData().then((response) => ads.init(response));
+  loadShowData().then((response) => {
+    ads.init(response);
+    pairs.init(response);
+  });
 }
 
 init();

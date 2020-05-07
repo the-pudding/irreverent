@@ -21,7 +21,6 @@ function setupChart() {
 }
 
 function setupButtons() {
-  console.log({ $ff });
   $ff.on('click', () => chart.ff());
   $pause.on('click', function () {
     const state = d3.select(this).attr('data-state');
@@ -51,7 +50,6 @@ function setupEnterView() {
 
 function init(res) {
   data = res.filter((d) => d.ad === 'yes');
-  console.log({ data, res });
   setupChart();
   setupButtons();
   setupEnterView();

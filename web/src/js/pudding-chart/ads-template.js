@@ -78,7 +78,7 @@ d3.selection.prototype.adsChart = function init(options) {
           const parent = d3.select(this.parentNode).node();
           const parentPos = parent.getBoundingClientRect();
           const parentX = parentPos.x;
-          const preferredLoc = (width * (i + 1)) / 4;
+          const preferredLoc = (width * (i + 2)) / 5;
           const dif = preferredLoc - parentX;
           const y = -height / 2 - PADDING * 2;
           return `translate(${dif}, ${y})`;
@@ -136,7 +136,6 @@ d3.selection.prototype.adsChart = function init(options) {
         .on('start', (d) => {
           // increase the title index
           titleIndex += 1;
-          console.log({ titleIndex });
           revealWords(d.title);
 
           $tv
@@ -303,7 +302,6 @@ d3.selection.prototype.adsChart = function init(options) {
       },
       ff() {
         // speed up all transitions to be double speed
-        console.log('ff');
         // interrupt current transition
         $tv.selectAll('*').interrupt();
 
@@ -331,11 +329,6 @@ d3.selection.prototype.adsChart = function init(options) {
           .interrupt('showTitles')
           .selectAll('*')
           .interrupt();
-
-        // $vis.selectAll('.word-container').transition().duration(0);
-        // $vis.selectAll('.g-word').transition().duration(0);
-        // $tv.select('.show').transition().duration(0);
-        console.log('pause');
       },
       replay() {
         titleIndex = 0;
