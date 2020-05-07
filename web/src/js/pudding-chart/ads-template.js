@@ -51,6 +51,14 @@ d3.selection.prototype.adsChart = function init(options) {
     function addTV() {
       $tv
         .append('image')
+        .attr('xlink:href', 'assets/images/gossip_girl.jpg')
+        .attr('class', 'show')
+        .attr('width', 375)
+        .attr('height', 216);
+
+      $tv
+        .append('image')
+        .attr('class', 'tv')
         .attr('xlink:href', 'assets/images/tv.png')
         .attr('width', 463)
         .attr('height', 266);
@@ -143,7 +151,11 @@ d3.selection.prototype.adsChart = function init(options) {
           .attr('width', width + MARGIN_LEFT + MARGIN_RIGHT)
           .attr('height', height + MARGIN_TOP + MARGIN_BOTTOM);
 
-        $tv.select('image').attr('x', width / 2 - 463 / 2);
+        $tv.select('.tv').attr('x', width / 2 - 463 / 2);
+        $tv
+          .select('.show')
+          .attr('x', width / 2 - 375 / 2)
+          .attr('y', 10);
         return Chart;
       },
       // update scales and render chart
@@ -157,11 +169,18 @@ d3.selection.prototype.adsChart = function init(options) {
 
         // convert to long data
         data.forEach((row) => {
-          delete row.ad;
-          delete row.original;
+          //   delete row.ad;
+          //   delete row.original;
+          //   delete row.img;
           // loop through each column and for each column make a new row
           Object.keys(row).forEach((colname) => {
-            if (colname === 'title' || colname === 'word') {
+            if (
+              colname === 'title' ||
+              colname === 'word' ||
+              colname === 'ad' ||
+              colname === 'original' ||
+              colname === 'img'
+            ) {
               return;
             }
             longData.push({
@@ -170,6 +189,8 @@ d3.selection.prototype.adsChart = function init(options) {
             });
           });
         });
+
+        console.log({ longData });
 
         const longNest = d3
           .nest()
@@ -232,6 +253,10 @@ d3.selection.prototype.adsChart = function init(options) {
           .transition()
           .on('start', (d) => {
             revealWords(d.title);
+            console.log({ d });
+            $tv
+              .select('.show')
+              .attr('xlink:href', `assets/images/${d.img}.jpg`);
           })
           .delay((d, i) => changeTitles * i)
           .attr('opacity', 1)

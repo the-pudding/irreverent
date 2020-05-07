@@ -12,7 +12,7 @@ function setupChart() {
 
 function init(res) {
   data = res.filter((d) => d.ad === 'yes');
-  console.log({ data });
+  console.log({ data, res });
   setupChart();
 }
 
