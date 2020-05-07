@@ -25,11 +25,11 @@ d3.selection.prototype.adsChart = function init(options) {
     let width = 0;
     let height = 0;
     const MARGIN_TOP = 0;
-    const MARGIN_BOTTOM = 0;
-    const MARGIN_LEFT = 0;
+    const MARGIN_BOTTOM = 32;
+    const MARGIN_LEFT = 16;
     const MARGIN_RIGHT = 0;
     const FONT_HEIGHT = 20;
-    const WORD_WIDTH = 70;
+    const WORD_WIDTH = 80;
 
     // animations
     const changeTitles = 3000;
@@ -39,7 +39,7 @@ d3.selection.prototype.adsChart = function init(options) {
 
     // scales
     const scaleY = null;
-    const scaleX = d3.scaleBand().padding(0.1);
+    const scaleX = d3.scaleBand().padding(0.2);
 
     // helper functions
 
@@ -48,8 +48,6 @@ d3.selection.prototype.adsChart = function init(options) {
     }
 
     function findParentX(el) {
-      const parent = d3.select(this.parentNode).node();
-      const parentPos = parent.getBoundingClientRect();
       return parentPos.x;
     }
 
@@ -86,12 +84,18 @@ d3.selection.prototype.adsChart = function init(options) {
         // .delay(moveWords)
         // // .attr('x', 0)
         .attr('x', function (d, i) {
-          const parentX = findParentX(d);
-          const preferredLoc = (width * (i + 1)) / 4;
-          return Math.abs(preferredLoc - parentX);
+          const parent = d3.select(this.parentNode).node();
+          const parentPos = parent.getBoundingClientRect();
+          const parentX = parentPos.x;
+          const preferredLoc = (width * (i + 2)) / 5;
+          const dif = preferredLoc - parentX;
+
+          return dif;
         })
         .attr('y', -height / 2)
         .transition()
+        .delay(1000)
+        .attr('x', 0)
         .attr('y', function stackWords() {
           const check = d3.select(this);
           const index = check.attr('data-index');
@@ -134,6 +138,11 @@ d3.selection.prototype.adsChart = function init(options) {
     }
 
     function moveGroups() {
+      const allGroups = $vis
+        .selectAll('.word')
+        .data()
+        .map((d) => d.word);
+
       // find all visible words and count them
       const allVisible = $vis
         .selectAll('.is-visible')
@@ -148,17 +157,20 @@ d3.selection.prototype.adsChart = function init(options) {
 
       const scaleKeys = nestedVis.map((d) => d.key);
 
-      scaleX.domain(scaleKeys).range([0, WORD_WIDTH * scaleKeys.length]);
+      const notScaleKeys = findUnique(
+        allGroups.filter((d) => !scaleKeys.includes(d))
+      );
+
+      const allKeys = scaleKeys.concat(notScaleKeys);
+
+      scaleX.domain(allKeys).range([MARGIN_LEFT, WORD_WIDTH * allKeys.length]);
 
       const groups = $vis
         .selectAll('.g-word')
         .transition()
-        .delay(1000)
+        .delay(0)
         .attr('transform', (d) => {
-          if (scaleKeys.includes(d.key)) {
-            return `translate(${scaleX(d.key)}, ${height})`;
-          }
-          return `translate(${width}, ${height})`;
+          return `translate(${scaleX(d.key)}, ${height})`;
         });
     }
 
@@ -217,12 +229,19 @@ d3.selection.prototype.adsChart = function init(options) {
           .key((d) => d.word)
           .entries(longData);
 
-        // // update x scale domain
-        // scaleX
-        //   .domain(longNest.map((d) => d.key))
-        //   .range([0, WORD_WIDTH * longNest.length]);
+        // set x location of first several groups
+        const firstSeveral = findUnique(longData.map((d) => d.word));
 
-        console.log({ scaleTest: scaleX('exciting') });
+        // update x scale domain
+        scaleX
+          .domain(longNest.map((d) => d.key))
+          .range([MARGIN_LEFT, WORD_WIDTH * longNest.length]);
+
+        console.log({
+          scaleTest: scaleX('suspenseful'),
+          firstSeveral,
+          longNest,
+        });
 
         // create group for each word
 
@@ -231,8 +250,8 @@ d3.selection.prototype.adsChart = function init(options) {
           .data(longNest)
           .join((enter) =>
             enter.append('g').attr('class', (d) => `g-word g-word__${d.key}`)
-          );
-        // .attr('transform', `translate(${width / 2}, ${height})`)
+          )
+          .attr('transform', (d) => `translate(${scaleX(d.key)}, ${height})`);
         //   .attr('height', height)
         //   .attr('width', width);
 
