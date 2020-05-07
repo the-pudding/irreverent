@@ -33,7 +33,7 @@ d3.selection.prototype.adsChart = function init(options) {
 
     // animations
     const transitionTime = 1000;
-    const delayTime = 1500;
+    const delayTime = 3000;
 
     // scales
     const scaleY = null;
@@ -54,10 +54,23 @@ d3.selection.prototype.adsChart = function init(options) {
       const visibleWords = theseWords
         .classed('is-visible', true)
         .attr('text-anchor', 'left')
-        .attr(
-          'transform',
-          (d, i) => `translate(${width * ((i + 1) / 4)}, ${height / 2})`
-        );
+        .attr('x', (d, i) => {
+          return (width * (i + 1)) / 4;
+        })
+        .attr('y', 0)
+        .transition()
+        .delay(delayTime / 2)
+        .attr('x', 0)
+        .attr('y', function stackWords() {
+          const check = d3.select(this);
+          const index = check.attr('data-index');
+          return -FONT_HEIGHT * index;
+        });
+      // .attr('transform', function stackWords(d, i) {
+      //   const check = d3.select(this);
+      //   const index = check.attr('data-index');
+      //   return `translate(0, ${height - FONT_HEIGHT * index})`;
+      // });
 
       // find all visible words and count them
       const allVisible = $vis
@@ -75,14 +88,7 @@ d3.selection.prototype.adsChart = function init(options) {
 
       scaleX.domain(scaleKeys).range([0, WORD_WIDTH * scaleKeys.length]);
 
-      visibleWords
-        .transition()
-        .delay(delayTime / 2)
-        .attr('transform', function stackWords(d, i) {
-          const check = d3.select(this);
-          const index = check.attr('data-index');
-          return `translate(0, ${height - FONT_HEIGHT * index})`;
-        });
+      visibleWords;
 
       const groups = $vis
         .selectAll('.g-word')
@@ -90,9 +96,9 @@ d3.selection.prototype.adsChart = function init(options) {
         .delay(delayTime)
         .attr('transform', (d) => {
           if (scaleKeys.includes(d.key)) {
-            return `translate(${scaleX(d.key)}, 0)`;
+            return `translate(${scaleX(d.key)}, ${height})`;
           }
-          return `translate(0, 0)`;
+          return `translate(0, ${height})`;
         });
     }
 
@@ -124,7 +130,7 @@ d3.selection.prototype.adsChart = function init(options) {
       // update scales and render chart
       render() {
         // offset chart for margins
-        $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
+        // $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
 
         // add the descriptive words
 
@@ -151,10 +157,10 @@ d3.selection.prototype.adsChart = function init(options) {
           .key((d) => d.word)
           .entries(longData);
 
-        // update x scale domain
-        scaleX
-          .domain(longNest.map((d) => d.key))
-          .range([0, WORD_WIDTH * longNest.length]);
+        // // update x scale domain
+        // scaleX
+        //   .domain(longNest.map((d) => d.key))
+        //   .range([0, WORD_WIDTH * longNest.length]);
 
         console.log({ scaleTest: scaleX('exciting') });
 
@@ -164,11 +170,9 @@ d3.selection.prototype.adsChart = function init(options) {
           .selectAll('.g-word')
           .data(longNest)
           .join((enter) =>
-            enter
-              .append('g')
-              .attr('class', (d) => `g-word g-word__${d.key}`)
-              .attr('data-visible', 0)
-          );
+            enter.append('g').attr('class', (d) => `g-word g-word__${d.key}`)
+          )
+          .attr('transform', `translate(${width / 2}, ${height})`);
 
         $gWord
           .selectAll('.word')
@@ -181,9 +185,11 @@ d3.selection.prototype.adsChart = function init(options) {
               .attr('data-index', (d, i) => `${i}`)
               .text((d) => d.word)
           )
-          .attr('transform', `translate(${width / 2}, ${height / 2})`)
+          // .attr('transform', `translate(${width / 2}, ${height / 2})`)
           .style('fill', 'white')
-          .attr('text-anchor', 'middle');
+          .attr('text-anchor', 'middle')
+          .attr('x', width / 2)
+          .attr('y', height / 2);
 
         // animate in the titles
         const $titleGroup = $tv.append('g').attr('class', 'g-titles');
