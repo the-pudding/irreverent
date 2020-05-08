@@ -16,6 +16,9 @@
 	.example 
 		max-width 400px
 		margin 0 auto
+.large
+	set-type-size('x-large')
+	font-weight bold
 
 .intro__meta 
 	display flex 
@@ -37,7 +40,7 @@
 		set-type-size('small')
 
 	p
-		font-family $anton 
+		font-family $martel 
 		set-type-size('medium')
 		a
 			border-bottom none
@@ -78,4 +81,13 @@
 			&.is-visible 
 				opacity 1
 			.word-bg 
-				fill rgba($bg, 0.8)
+				fill $gray-dark
+				padding 0 0.1rem
+            .word
+				set-type-size('small')
+				margin 0
+				text-align center
+				word-wrap normal
+				font-family $martel
+				color $gray-light
+			

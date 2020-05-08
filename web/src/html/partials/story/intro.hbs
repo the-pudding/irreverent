@@ -13,27 +13,10 @@
 	<p class='prose'>{{{value}}}</p>
 	{{/each}}
 
-	<img class='example' src='assets/images/example.png'
-		alt='Image of Tiger King screenshot on TV with highlighted descriptive words, riveting, provocative, investigative'>
-
-	<p class='prose'>{{{doc.preGraph}}}</p>
-
-
 	{{> story/ads }}
 
-	<p class='prose'>{{{doc.postGraph}}}</p>
-
-	<div class='highlight'>
-		<div class='highlight__inner'>
-			<p class='prose__highlight'>{{{doc.highlight}}}</p>
-		</div>
-	</div>
-
-
-
-	{{#each doc.post-highlight}}
+	{{#each doc.postTv}}
 	<p class='prose'>{{{value}}}</p>
 	{{/each}}
-
 
 </section>

@@ -52,6 +52,8 @@ netflix <- readr::read_csv(here::here("assets", "data", "raw_data", "netflix.csv
   # remove kids / family movies
   filter(word1 != "children & family" & word2 != "children & family" & word3 != "children & family") %>% 
   filter(word1 != "kids" & word2 != "kids" & word3 != "kids")
+
+write.csv(netflix, "../../web/src/assets/data/shows.csv", row.names = FALSE)
 ```
 
 ## Exploration
