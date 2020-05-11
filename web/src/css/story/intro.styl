@@ -87,8 +87,10 @@
 				font-family $national
 				set-type-size('x-large')
 				font-weight bold
-				text-shadow 2px 2px 5px $bg
 				fill $white
+			.show__title-bg
+				stroke $bg 
+				stroke-width 2px
 
 			.word-container, .tag-container
 				opacity 0
@@ -106,12 +108,13 @@
 				text-transform uppercase
 				fill $gray-light
 			.tag
-				set-type-size('small')
+				set-type-size('root')
 				margin 0
 				text-align center
 				word-wrap normal
-				font-family $martel
+				font-family $national
 				fill $white
+				font-weight bold
 
 			.show__tag
 				text-shadow 2px 2px 5px $bg
@@ -125,3 +128,17 @@
 				fill $gray-light
 			.show__tag-bg 
 				fill $bg
+				stroke $bg 
+				stroke-width 2px
+		.article-title
+			.title-bg 
+				fill $primary 
+			text 
+				fill $white 
+				font-family $national
+			
+			.title-desc
+				set-type-size('x-large')
+				font-weight bold
+			.title-sub 
+				set-type-size('root')
