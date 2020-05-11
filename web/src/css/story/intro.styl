@@ -79,9 +79,10 @@
 		svg  
 			.title 
 				font-family $national
-				set-type-size('large')
+				set-type-size('x-large')
 				font-weight bold
 				text-shadow 2px 2px 5px $bg
+				fill $white
 
 			.word-container, .tag-container
 				opacity 0
@@ -106,6 +107,9 @@
 				font-family $martel
 				fill $white
 
+			.show__tag
+				text-shadow 2px 2px 5px $bg
+
 			.word
 				set-type-size('x-small')
 				margin 0
@@ -114,4 +118,4 @@
 				font-family $martel
 				fill $gray-light
 			.show__tag-bg 
-				color $bg
+				fill $bg

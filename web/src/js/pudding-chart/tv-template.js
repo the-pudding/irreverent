@@ -87,9 +87,7 @@ d3.selection.prototype.tvChart = function init(options) {
     }
 
     function cycleWords(index) {
-      const theseWords = $tv
-        .selectAll('.tag-container')
-        .filter((d, i) => i === index);
+      const theseWords = $tv.selectAll('.g-meta').filter((d, i) => i === index);
 
       theseWords.classed('is-visible', true);
 
@@ -97,6 +95,8 @@ d3.selection.prototype.tvChart = function init(options) {
         .data()
         .map((d) => [d.word1, d.word2, d.word3])
         .flat();
+
+      console.log({ onlyWords, theseWords, index });
 
       onlyWords.forEach((d) => {
         const filtered = wordCount.filter((e) => e.name === d);
@@ -112,70 +112,6 @@ d3.selection.prototype.tvChart = function init(options) {
 
       // update list
       updateList(updatedCount);
-    }
-
-    function revealWords(title) {
-      const allWords = $vis.selectAll('.word-container');
-      const theseWords = allWords.filter((d, i, n) => {
-        return d3.select(n[i]).attr('data-title') === title;
-      });
-
-      const visibleWords = theseWords
-        .classed('is-visible', true)
-        .attr('transform', function (d, i) {
-          const parent = d3.select(this.parentNode).node();
-          const parentPos = parent.getBoundingClientRect();
-          const parentX = parentPos.x;
-          const preferredLoc = (width * (i + 2)) / 5;
-          const dif = preferredLoc - parentX;
-          const y = -height / 2 - PADDING * 2;
-          return `translate(${dif}, ${y})`;
-        })
-
-        .transition()
-        .delay(moveWords)
-        .attr('transform', function () {
-          const check = d3.select(this);
-          const index = check.attr('data-index');
-          return `translate(0, ${-FONT_HEIGHT * index})`;
-        });
-    }
-
-    function moveGroups() {
-      const allGroups = $vis
-        .selectAll('.word-container')
-        .data()
-        .map((d) => d.word);
-
-      // find all visible words and count them
-      const allVisible = $vis
-        .selectAll('.is-visible')
-        .data()
-        .map((d) => d.word);
-      const nestedVis = d3
-        .nest()
-        .key((d) => d)
-        .rollup((leaves) => leaves.length)
-        .entries(allVisible)
-        .sort((a, b) => d3.descending(a.value, b.value));
-
-      const scaleKeys = nestedVis.map((d) => d.key);
-
-      const notScaleKeys = findUnique(
-        allGroups.filter((d) => !scaleKeys.includes(d))
-      );
-
-      const allKeys = scaleKeys.concat(notScaleKeys);
-
-      scaleX.domain(allKeys).range([MARGIN_LEFT, WORD_WIDTH * allKeys.length]);
-
-      const groups = $vis
-        .selectAll('.g-word')
-        .transition()
-        .delay(0)
-        .attr('transform', (d) => {
-          return `translate(${scaleX(d.key)}, ${height})`;
-        });
     }
 
     function cycleTitles(sel) {
@@ -196,6 +132,7 @@ d3.selection.prototype.tvChart = function init(options) {
             .attr('opacity', 1);
         })
         .on('cancel', function (d) {
+          console.log('canceled');
           // when the animation is interrupted
           $tv.selectAll('.title-container').attr('opacity', 0);
           $tv.selectAll('.tag-container').classed('is-visible', false);
@@ -259,66 +196,54 @@ d3.selection.prototype.tvChart = function init(options) {
 
         $listSvg.select('.list-title').attr('y', FONT_HEIGHT);
 
-        // add the descriptive words
+        // add metadata group
 
-        const $wordGroup = $tv.append('g').attr('class', 'g-tags');
-
-        $wordGroup
-          .selectAll('.tags')
+        const $metaGroup = $tv
+          .selectAll('.g-meta')
           .data(data, (d) => d.title)
           .join((enter) => {
-            const group = enter.append('g').attr('class', 'tag-container');
-            group
+            const group = enter.append('g').attr('class', 'g-meta');
+
+            const tagGroup = group
+              .append('g')
+              .attr('class', 'g-tags')
+              .attr('transform', `translate(0, ${FONT_HEIGHT})`);
+
+            tagGroup
               .append('text')
               .attr('class', 'show__tag-bg tag')
               .text((d) => `${d.word1} • ${d.word2} • ${d.word3}`)
               .attr('text-anchor', 'middle');
 
-            group
+            tagGroup
               .append('text')
               .attr('class', 'show__tag tag')
               .text((d) => `${d.word1} • ${d.word2} • ${d.word3}`)
-              .style('fill', '#FFF')
               .attr('text-anchor', 'middle');
 
-            return group;
-          })
-          .attr('transform', `translate(${width / 2}, ${height - FONT_HEIGHT})`)
-          .attr('opacity', 0);
+            const titleGroup = group.append('g').attr('class', 'g-title');
 
-        // animate in the titles
-        const $titleGroup = $tv.select('.g-titles');
-
-        $titleGroup
-          .selectAll('.title-container')
-          .data(data, (d) => d.title)
-          .join((enter) => {
-            const group = enter.append('g').attr('class', 'title-container');
-            group
+            titleGroup
               .append('text')
               .attr('class', 'show__title-bg title')
               .text((d) => d.title)
               .attr('text-anchor', 'middle');
 
-            group
+            titleGroup
               .append('text')
               .attr('class', 'show__title title')
               .text((d) => d.title)
-              .style('fill', '#FFF')
               .attr('text-anchor', 'middle');
 
             return group;
           })
-
           .attr(
             'transform',
-            `translate(${width / 2}, ${FONT_HEIGHT + PADDING})`
+            `translate(${width / 2}, ${height - FONT_HEIGHT * 2})`
           )
           .attr('opacity', 0);
 
-        const containers = d3.selectAll('.title-container');
-
-        cycleTitles(containers);
+        cycleTitles($metaGroup);
 
         return Chart;
       },
