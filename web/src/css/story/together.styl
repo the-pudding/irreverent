@@ -10,13 +10,16 @@
                 set-type-size('root')
                 font-family $national-narrow
             .chosen, .count
-                font-family $anton
-                background $primary 
-                padding 0 0.4rem
+                font-family $national
+                font-weight bold 
+                text-transform uppercase
+
             
             select 
-                font-family $anton
-                set-type-size('root')
+                font-family $national
+                set-type-size('medium')
+                font-weight bold 
+
 
     .figure__inner 
         display flex 
@@ -29,15 +32,23 @@
 
     &-table 
         font-family $martel
+        max-width $column-width
         th
             set-type-size('medium')
             font-weight bold
             border-bottom 1px solid $white
+        tr
+            border-bottom 1px solid lighten($bg, 8)
         td 
             set-type-size('small')
             padding 0.25rem 0
             span
-                opacity 0.25
+                display inline-block
+                width 75px
+                margin-right 0.5rem
+                &.sel
+                    opacity 0.25
             &.Title
                 padding-right 2rem
                 font-style italic
+                min-width 200px

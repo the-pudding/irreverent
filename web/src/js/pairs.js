@@ -48,14 +48,16 @@ function setupTableHeader() {
 
 function highlightWord(word, text) {
   const pattern = new RegExp(`((\\b)((${word}).*?)(\\b))`);
-  const replaceWith = '<span>$1</span>';
+  const replaceWith = '<span class="sel">$1</span>';
 
   const rep = text.replace(pattern, replaceWith);
   return rep;
 }
 function setupTable(selWord) {
   // keep only titles that include the word we're looking for
-  const wordOnly = data.filter((d) => d.words.includes(selWord));
+  const wordOnly = data
+    .filter((d) => d.words.includes(selWord))
+    .sort((a, b) => d3.ascending(a.title, b.title));
 
   const uniqueWords = findUnique(wordOnly.map((d) => d.words).flat()).filter(
     (d) => d !== selWord
@@ -81,8 +83,17 @@ function setupTable(selWord) {
     .join((enter) => enter.append('td').attr('class', (d) => `${d.title}`))
     .html((d) => {
       if (d.title === 'Descriptive Words') {
-        const dimmed = highlightWord(selWord, d.value.join(' • '));
-        return dimmed;
+        const vals = d.value.map((e) => {
+          let styled = null;
+          if (e === selWord) styled = highlightWord(selWord, e);
+          else styled = `<span>${e}</span>`;
+
+          return styled;
+        });
+
+        const joined = vals.join(' ');
+
+        return joined;
       }
       return d.value;
     });
