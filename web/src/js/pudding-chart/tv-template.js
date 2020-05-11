@@ -30,12 +30,16 @@ d3.selection.prototype.tvChart = function init(options) {
     let width = 0;
     let height = 0;
     const MARGIN_TOP = 0;
-    const MARGIN_BOTTOM = 32;
+    const MARGIN_BOTTOM = 60;
     const MARGIN_LEFT = 16;
     const MARGIN_RIGHT = 0;
     const FONT_HEIGHT = 20;
     const WORD_WIDTH = 80;
     const PADDING = 16;
+    const COLUMN_WIDTH = 640;
+    const RAIL_WIDTH = 150;
+    let showWidth = 0;
+    let TV_STAND = 0;
 
     let titleIndex = 0;
     let currentTitle = 'Gossip Girls';
@@ -76,16 +80,41 @@ d3.selection.prototype.tvChart = function init(options) {
       $tv
         .append('image')
         .attr('xlink:href', 'assets/images/gossip_girl.jpg')
-        .attr('class', 'show')
-        .attr('width', 375)
-        .attr('height', 216);
+        .attr('class', 'show');
 
       $tv
         .append('image')
         .attr('class', 'tv')
-        .attr('xlink:href', 'assets/images/tv.png')
-        .attr('width', 463)
-        .attr('height', 266);
+        .attr('xlink:href', 'assets/images/tv.png');
+    }
+
+    function resizeTV() {
+      showWidth = width / 1.06;
+
+      $tv
+        .select('.tv')
+        .attr('width', width)
+        .attr('height', width / 1.6);
+
+      $tv
+        .select('.show')
+        .attr('width', showWidth)
+        .attr('height', showWidth / 1.8);
+
+      $tv.select('.tv').attr('x', 0);
+      $tv
+        .select('.show')
+        .attr('x', width / 2 - showWidth / 2)
+        .attr('y', 10);
+    }
+
+    function resizeTitles() {
+      $tv
+        .selectAll('.g-meta')
+        .attr(
+          'transform',
+          `translate(${width / 2}, ${height - TV_STAND - FONT_HEIGHT})`
+        );
     }
 
     function cycleWords(index) {
@@ -162,29 +191,50 @@ d3.selection.prototype.tvChart = function init(options) {
         // generate list of titles
         titles = data.map((d) => d.title);
 
-        addTV();
-
         // setup viz group
         $vis = $svg.append('g').attr('class', 'g-vis');
+
+        addTV();
       },
       // on resize, update new dimensions
       resize() {
+        const pageWidth = window.innerWidth;
+        console.log({ pageWidth });
         // defaults to grabbing dimensions from container element
         width = $chart.node().offsetWidth - MARGIN_LEFT - MARGIN_RIGHT;
         height = $chart.node().offsetHeight - MARGIN_TOP - MARGIN_BOTTOM;
+
+        const threeColumnsFit = pageWidth > COLUMN_WIDTH + 2 * RAIL_WIDTH;
+        const tooNarrow = pageWidth < 560;
+
+        if (threeColumnsFit) width = COLUMN_WIDTH;
+        else if (tooNarrow) width = width;
+        else width = COLUMN_WIDTH - 2 * RAIL_WIDTH;
+
+        height = width / 1.6;
+
         $svg
           .attr('width', width + MARGIN_LEFT + MARGIN_RIGHT)
           .attr('height', height + MARGIN_TOP + MARGIN_BOTTOM);
 
-        $tv.select('.tv').attr('x', width / 2 - 463 / 2);
-        $tv
-          .select('.show')
-          .attr('x', width / 2 - 375 / 2)
-          .attr('y', 10);
+        TV_STAND = height * 0.2;
 
-        const listWidth = $list.node().offsetWidth;
+        const listWidth = threeColumnsFit ? RAIL_WIDTH : RAIL_WIDTH;
         const listHeight = $list.node().offsetHeight;
         $listSvg.attr('width', listWidth).attr('height', listHeight);
+
+        const controls = d3
+          .select('.controls')
+          .style('width', `${RAIL_WIDTH}px`);
+
+        resizeTV();
+
+        // if titles already exist, resize them
+        const $titles = $tv.selectAll('.g-meta');
+        if ($titles.size) {
+          resizeTitles();
+        }
+
         return Chart;
       },
       // update scales and render chart
@@ -238,7 +288,7 @@ d3.selection.prototype.tvChart = function init(options) {
           })
           .attr(
             'transform',
-            `translate(${width / 2}, ${height - FONT_HEIGHT * 2})`
+            `translate(${width / 2}, ${height - TV_STAND - FONT_HEIGHT})`
           )
           .attr('opacity', 0);
 

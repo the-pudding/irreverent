@@ -21,6 +21,7 @@ function resize() {
   if (previousWidth !== width) {
     previousWidth = width;
     graphic.resize();
+    ads.resize();
   }
 }
 

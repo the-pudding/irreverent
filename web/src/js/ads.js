@@ -14,7 +14,9 @@ const $replay = $section.select('.replay');
 
 let chart = null;
 
-function resize() {}
+function resize() {
+  chart.resize();
+}
 
 function setupChart() {
   chart = $figure.data([data]).tvChart();

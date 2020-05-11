@@ -55,15 +55,15 @@ d3.selection.prototype.adsChart = function init(options) {
         .append('image')
         .attr('xlink:href', 'assets/images/gossip_girl.jpg')
         .attr('class', 'show')
-        .attr('width', 375)
-        .attr('height', 216);
+        .attr('width', width);
+        .attr('height', height);
 
       $tv
         .append('image')
         .attr('class', 'tv')
         .attr('xlink:href', 'assets/images/tv.png')
-        .attr('width', 463)
-        .attr('height', 266);
+        .attr('width', width);
+        .attr('height', height);
     }
 
     function revealWords(title) {
@@ -177,6 +177,8 @@ d3.selection.prototype.adsChart = function init(options) {
         // defaults to grabbing dimensions from container element
         width = $chart.node().offsetWidth - MARGIN_LEFT - MARGIN_RIGHT;
         height = $chart.node().offsetHeight - MARGIN_TOP - MARGIN_BOTTOM;
+
+        console.log({width})
         $svg
           .attr('width', width + MARGIN_LEFT + MARGIN_RIGHT)
           .attr('height', height + MARGIN_TOP + MARGIN_BOTTOM);
