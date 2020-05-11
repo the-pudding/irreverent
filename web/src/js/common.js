@@ -1,17 +1,18 @@
 import loadData from './load-data';
+import graphic from './graphic';
 
 // selections
 const $container = d3.select('.common');
 const $figure = $container.select('.figure__inner');
 
 let data = [];
+let maxBlocks = 0;
+const BLOCK_WIDTH = 83;
 
-function resize() {}
-
-function generateWordGroups() {
+function generateWordGroups(cutData) {
   const $group = $figure
     .selectAll('.group')
-    .data(data)
+    .data(cutData)
     .join((enter) =>
       enter.append('div').attr('class', (d) => `group group--${d.word}`)
     );
@@ -29,20 +30,33 @@ function generateWordGroups() {
     });
 }
 
+function resize() {
+  const graphicWidth = $figure.node().offsetWidth;
+  maxBlocks = Math.floor(graphicWidth / BLOCK_WIDTH);
+  console.log({ maxBlocks });
+
+  if (data) {
+    const sliced = data.slice(0, maxBlocks);
+    generateWordGroups(sliced);
+  }
+}
 function cleanData(res) {
   const clean = res.map((d) => ({
     ...d,
     n: d3.range(0, +d.n / 2).map(() => d.word),
   }));
 
-  return clean;
+  const clipped = clean.slice(0, maxBlocks);
+
+  return clipped;
 }
 
 function init() {
   loadData('common.csv')
     .then((result) => {
+      resize();
       data = cleanData(result);
-      generateWordGroups();
+      generateWordGroups(data);
     })
     .catch(console.error);
 }

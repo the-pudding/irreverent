@@ -22,6 +22,7 @@ function resize() {
     previousWidth = width;
     graphic.resize();
     ads.resize();
+    common.resize();
   }
 }
 
