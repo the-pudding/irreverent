@@ -24,6 +24,7 @@ d3.selection.prototype.tvChart = function init(options) {
     // data
     let data = $chart.datum();
     let wordCount = [];
+    let titles = null;
 
     // dimensions
     let width = 0;
@@ -37,6 +38,7 @@ d3.selection.prototype.tvChart = function init(options) {
     const PADDING = 16;
 
     let titleIndex = 0;
+    let currentTitle = 'Gossip Girls';
 
     // animations
     let changeTitles = 3000;
@@ -96,8 +98,6 @@ d3.selection.prototype.tvChart = function init(options) {
         .map((d) => [d.word1, d.word2, d.word3])
         .flat();
 
-      console.log({ onlyWords, theseWords, index });
-
       onlyWords.forEach((d) => {
         const filtered = wordCount.filter((e) => e.name === d);
         if (!filtered.length) wordCount.push({ name: d, count: 1 });
@@ -120,10 +120,13 @@ d3.selection.prototype.tvChart = function init(options) {
         .delay((d, i) => changeTitles * i)
         .attr('opacity', 1)
         .on('start', (d, i) => {
+          currentTitle = d.title;
+
           // increase the title index
-          titleIndex += 1;
+          titleIndex = titles.indexOf(currentTitle);
+
           // reveal tags
-          cycleWords(i);
+          cycleWords(titleIndex);
 
           $tv
             .select('.show')
@@ -131,17 +134,10 @@ d3.selection.prototype.tvChart = function init(options) {
             .transition()
             .attr('opacity', 1);
         })
-        .on('cancel', function (d) {
-          console.log('canceled');
-          // when the animation is interrupted
-          $tv.selectAll('.title-container').attr('opacity', 0);
-          $tv.selectAll('.tag-container').classed('is-visible', false);
-        })
         .transition('removeTitles')
-        .on('end', (d) => {
-          // moveGroups();
+        .on('start', (d) => {
+          // fade out show image
           $tv.select('.show').transition().attr('opacity', 0);
-          $tv.selectAll('.tag-container').classed('is-visible', false);
         })
         .delay(fadeTitles)
         .attr('opacity', 0);
@@ -162,6 +158,9 @@ d3.selection.prototype.tvChart = function init(options) {
         $tv = $svg.append('g').attr('class', 'g-tv');
         $tv.append('rect').attr('class', 'tv-outline');
         $tv.append('g').attr('class', 'g-titles');
+
+        // generate list of titles
+        titles = data.map((d) => d.title);
 
         addTV();
 
@@ -263,27 +262,32 @@ d3.selection.prototype.tvChart = function init(options) {
         Chart.play();
       },
       play() {
-        const remaining = $tv
-          .selectAll('.title-container')
-          .filter((d, i) => i >= titleIndex);
+        const all = $tv.selectAll('.g-meta');
+
+        all.attr('opacity', 0);
+
+        titleIndex = titles.indexOf(currentTitle);
+
+        const remaining = all.filter((d, i) => i > titleIndex);
 
         cycleTitles(remaining);
       },
       pause() {
         // interrupt current transition
         $tv
-          .selectAll('.title-container')
+          .selectAll('.g-meta')
           .interrupt('showTitles')
           .selectAll('*')
           .interrupt();
       },
       replay() {
         titleIndex = 0;
+        currentTitle = 'Gossip Girls';
         wordCount = [];
         Chart.pause();
-        const all = $tv.selectAll('.title-container');
+        const all = $tv.selectAll('.g-meta');
+        all.attr('opacity', 0);
         cycleTitles(all);
-        $vis.selectAll('.word-container').classed('is-visible', false);
       },
       // get / set data
       data(val) {

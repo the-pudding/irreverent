@@ -24,7 +24,6 @@ function setupChart() {
 function setupButtons() {
   $ff.on('click', () => chart.ff());
   $pause.on('click', function () {
-    console.log('paused');
     const state = d3.select(this).attr('data-state');
     if (state === 'playing') {
       $pause.attr('data-state', 'paused');
