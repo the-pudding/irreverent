@@ -1,28 +1,30 @@
-import './pudding-chart/ads-template';
+import './pudding-chart/tv-template';
 import EnterView from 'enter-view';
 import pauseSvg from './pauseSvg';
 import playSvg from './playSvg';
 
 let data = [];
 
-const $container = d3.select('.ads');
-const $figure = $container.select('.figure__inner');
-const $ff = $container.select('.x2');
-const $pause = $container.select('.pause');
-const $replay = $container.select('.replay');
+const $section = d3.select('.ads');
+const $container = $section.select('.figure__container');
+const $figure = $container.select('.figure__inner-graph');
+const $ff = $section.select('.x2');
+const $pause = $section.select('.pause');
+const $replay = $section.select('.replay');
 
 let chart = null;
 
 function resize() {}
 
 function setupChart() {
-  chart = $figure.data([data]).adsChart();
+  chart = $figure.data([data]).tvChart();
   chart.resize();
 }
 
 function setupButtons() {
   $ff.on('click', () => chart.ff());
   $pause.on('click', function () {
+    console.log('paused');
     const state = d3.select(this).attr('data-state');
     if (state === 'playing') {
       $pause.attr('data-state', 'paused');
@@ -39,7 +41,7 @@ function setupButtons() {
 
 function setupEnterView() {
   EnterView({
-    selector: '.ads .figure__inner',
+    selector: '.ads .figure__inner-graph',
     enter(el) {
       chart.resize().render();
     },
