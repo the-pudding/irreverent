@@ -388,6 +388,7 @@ d3.selection.prototype.tvChart = function init(options) {
         currentTitle = 'Gossip Girls';
         wordCount = [];
         Chart.pause();
+        $tv.select('.article-title').attr('opacity', 0);
         const all = $tv.selectAll('.g-meta');
         all.attr('opacity', 0);
         cycleTitles(all);

@@ -46,9 +46,7 @@ function cleanData(res) {
     n: d3.range(0, +d.n / 2).map(() => d.word),
   }));
 
-  const clipped = clean.slice(0, maxBlocks);
-
-  return clipped;
+  return clean;
 }
 
 function init() {
@@ -56,7 +54,8 @@ function init() {
     .then((result) => {
       resize();
       data = cleanData(result);
-      generateWordGroups(data);
+      const clipped = data.slice(0, maxBlocks);
+      generateWordGroups(clipped);
     })
     .catch(console.error);
 }
