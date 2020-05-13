@@ -34,6 +34,7 @@ d3.selection.prototype.tvChart = function init(options) {
     const MARGIN_LEFT = 0;
     const MARGIN_RIGHT = 0;
     const FONT_HEIGHT = 30;
+    const SMALL_FONT = 20;
     const WORD_WIDTH = 80;
     const PADDING = 16;
     const COLUMN_WIDTH = 880;
@@ -70,11 +71,11 @@ d3.selection.prototype.tvChart = function init(options) {
             .append('text')
             .attr('class', 'word')
             .attr('data-word', (d) => d.name)
-            .attr('y', height + FONT_HEIGHT)
+            .attr('y', height + SMALL_FONT)
         )
         .text((d) => `${d.name}: ${d.count}`)
         .transition()
-        .attr('y', (d, i) => i * FONT_HEIGHT);
+        .attr('y', (d, i) => i * SMALL_FONT);
     }
 
     function addTV() {
@@ -121,26 +122,26 @@ d3.selection.prototype.tvChart = function init(options) {
     function resizeTV() {
       showWidth = width / 1.06;
 
-      $tv
-        .select('.tv-outline')
-        .attr('width', width - 8)
-        .attr('height', height)
-        .attr('x', MARGIN_LEFT + 4)
-        .attr('y', MARGIN_TOP);
+      // $tv
+      //   .select('.tv-outline')
+      //   .attr('width', width - 5)
+      //   .attr('height', height - 5)
+      //   .attr('x', MARGIN_LEFT + 5)
+      //   .attr('y', 5);
 
       $tv
         .select('.show')
         .attr('width', width)
         .attr('height', height)
-        .attr('y', MARGIN_TOP)
-        .attr('x', MARGIN_LEFT);
+        .attr('y', 0)
+        .attr('x', 0);
 
       $tv
         .select('.tv-overlay')
-        .attr('width', width - 8)
+        .attr('width', width)
         .attr('height', height)
-        .attr('y', MARGIN_TOP)
-        .attr('x', MARGIN_LEFT)
+        .attr('y', 0)
+        .attr('x', 0)
         .style('fill', 'url(#linear-gradient');
     }
 
@@ -203,57 +204,9 @@ d3.selection.prototype.tvChart = function init(options) {
         .on('start', (d) => {
           // fade out show image
           $tv.select('.show').transition().attr('opacity', 0);
-
-          if (d.title === 'Nailed It!')
-            $tv
-              .select('.article-title')
-              .transition()
-              .delay(200)
-              .attr('opacity', 1);
         })
         .delay(fadeTitles)
         .attr('opacity', 0);
-    }
-
-    function setupArticleTitle() {
-      // add article title
-      const group = $tv
-        .append('g')
-        .attr('class', 'article-title')
-        .attr('opacity', 0);
-
-      group.append('rect').attr('class', 'title-bg');
-
-      group
-        .append('text')
-        .attr('class', 'title-desc')
-        .text('Exciting • Witty • Irreverent')
-        .attr('text-anchor', 'middle');
-      group
-        .append('text')
-        .attr('class', 'title-sub')
-        .text('A Pudding Investigation into Netflix Tagging')
-        .attr('text-anchor', 'middle');
-    }
-
-    function resizeArticleTitle() {
-      const group = $tv.select('.article-title');
-
-      group
-        .select('rect')
-        .attr('x', width / 2 - showWidth / 2)
-        .attr('y', 10)
-        .attr('width', showWidth)
-        .attr('height', showWidth / 1.8);
-      group
-        .select('.title-desc')
-        .attr(
-          'transform',
-          `translate(${width / 2}, ${height / 2 - FONT_HEIGHT})`
-        );
-      group
-        .select('.title-sub')
-        .attr('transform', `translate(${width / 2}, ${height / 2})`);
     }
 
     const Chart = {
@@ -261,16 +214,11 @@ d3.selection.prototype.tvChart = function init(options) {
       init() {
         $svg = $chart.append('svg').attr('class', 'pudding-chart');
         $listSvg = $list.append('svg').attr('class', 'pudding-list');
-        $listSvg
-          .append('text')
-          .text('# Occurrences')
-          .attr('class', 'list-title');
+        $listSvg.append('text').text('# Uses').attr('class', 'list-title');
 
         $listWords = $listSvg.append('g').attr('class', 'g-words');
         // setup tv
         $tv = $svg.append('g').attr('class', 'g-tv');
-
-        setupArticleTitle();
 
         // generate list of titles
         titles = data.map((d) => d.title);
@@ -302,7 +250,7 @@ d3.selection.prototype.tvChart = function init(options) {
         else if (tooNarrow) width = width;
         else width = COLUMN_WIDTH - 2 * RAIL_WIDTH;
 
-        height = width / 1.8;
+        height = width / 1.77;
 
         $svg
           .attr('width', width + MARGIN_LEFT + MARGIN_RIGHT)
@@ -319,7 +267,6 @@ d3.selection.prototype.tvChart = function init(options) {
           .style('min-width', `${RAIL_WIDTH}px`);
 
         resizeTV();
-        resizeArticleTitle();
 
         // if titles already exist, resize them
         const $titles = $tv.selectAll('.g-meta');
@@ -333,9 +280,9 @@ d3.selection.prototype.tvChart = function init(options) {
       render() {
         // offset chart for margins
         $vis.attr('transform', `translate(${MARGIN_LEFT}, ${MARGIN_TOP})`);
-        $listWords.attr('transform', `translate(0, ${FONT_HEIGHT * 2})`);
+        $listWords.attr('transform', `translate(0, ${SMALL_FONT * 2})`);
 
-        $listSvg.select('.list-title').attr('y', FONT_HEIGHT);
+        $listSvg.select('.list-title').attr('y', SMALL_FONT);
 
         // add metadata group
 
@@ -415,7 +362,6 @@ d3.selection.prototype.tvChart = function init(options) {
         currentTitle = 'Gossip Girls';
         wordCount = [];
         Chart.pause();
-        $tv.select('.article-title').attr('opacity', 0);
         const all = $tv.selectAll('.g-meta');
         all.attr('opacity', 0);
         cycleTitles(all);

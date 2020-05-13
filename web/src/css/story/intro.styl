@@ -14,16 +14,24 @@
 		text-align center
 
 
-	.adsStart 
+	.scroll-note
 		background-color $primary
 		font-family $national
 		set-type-size('medium')
 		text-align center 
-		padding 0.5rem 2.5rem
-		color $fg
-		text-transform uppercase
-		margin 1rem auto
-		max-width 300px
+		max-width 400px
+		margin 3rem auto
+		.scroll-text 
+			padding 1rem
+			color $fg
+			text-transform uppercase
+			font-weight bold
+			align-self center
+			
+
+	.entCenter 
+		max-width 60rem
+		margin 3rem auto 4rem auto
 
 .intro__meta 
 	display flex 
@@ -57,7 +65,8 @@
 	margin 2rem auto 
 	overflow hidden
 
-
+	.pudding-chart
+		border 5px solid #484848
 
 	.figure__container 
 		display flex
@@ -78,25 +87,21 @@
 				flex-direction column
 			button 
 				padding 0.5rem 0.5rem
-				margin 0.25rem
-				width 40px
+				margin 0.5rem 0.25rem
+				width 64px
+				height 64px
 				border-radius 50%
-				background lighten($bg, 5)
-				border 1px solid $white
+				background $fg
 				display flex 
 				flex-direction row
-				justify-items center
+				justify-content center
 				align-items center
 				svg		
-					color $white
-					transform scale(0.75)
+					color $bg
+
+
 		
 		svg  
-			.tv-outline 
-				stroke $gray
-				stroke-width 4px
-				fill transparent
-
 			.title 
 				font-family $national
 				set-type-size('xxxxx-large')
@@ -114,11 +119,12 @@
 					fill $gray-dark
 					padding 0 0.1rem
 			.list-title 
-				set-type-size('root')
+				set-type-size('medium')
 				font-family $national-narrow
 				font-weight bold
 				text-transform uppercase
 				fill $gray-light
+				
 			.tag
 				set-type-size('xx-large')
 				margin 0
@@ -142,16 +148,4 @@
 		.pudding-list 
 			margin-left 1rem
 
-		.article-title
-			.title-bg 
-				fill $primary 
-			text 
-				fill $white 
-				font-family $national
-			
-			.title-desc
-				set-type-size('x-large')
-				font-weight bold
-				text-transform uppercase
-			.title-sub 
-				set-type-size('root')
+
