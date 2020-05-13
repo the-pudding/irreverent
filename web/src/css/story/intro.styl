@@ -19,10 +19,13 @@
 		font-family $national
 		set-type-size('medium')
 		text-align center 
-		max-width 400px
-		margin 3rem auto
+		max-width 375px
+		margin 4rem auto 1rem auto
+		display flex 
+		align-items center
+
 		.scroll-text 
-			padding 1rem
+			padding 0rem 1rem
 			color $fg
 			text-transform uppercase
 			font-weight bold
@@ -35,29 +38,26 @@
 
 .intro__meta 
 	display flex 
-	flex-direction column
-	width 150px
-	position absolute 
-	top 8rem
-	left 0
-	translate(calc(-100% - 37px),0)
-	justify-content flex-end
-	display none
+	flex-direction row
+	align-items baseline
+	margin 0 auto 2rem auto
+	max-width 55rem
+	padding 0 1rem
 
 	p, time 
 		font-weight 500
 		margin 0
 		text-align right
+		font-family $national
+		set-type-size('root')
+		margin-right 0.5rem
 
-	time 
-		font-family $national-narrow
-		set-type-size('small')
-
-	p
-		font-family $martel 
-		set-type-size('medium')
 		a
 			border-bottom none
+
+	time 
+		color $gray
+
 
 
 .ads 
@@ -142,8 +142,11 @@
 				margin 0
 				text-align center
 				word-wrap normal
-				font-family $martel
+				font-family $national
 				fill $gray-light
+				&.highlight
+					fill lighten($primary, 10)
+					font-weight bold
 
 		.pudding-list 
 			margin-left 1rem

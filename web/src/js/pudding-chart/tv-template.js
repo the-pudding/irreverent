@@ -74,6 +74,7 @@ d3.selection.prototype.tvChart = function init(options) {
             .attr('y', height + SMALL_FONT)
         )
         .text((d) => `${d.name}: ${d.count}`)
+        .classed('highlight', (d, i) => i === 0)
         .transition()
         .attr('y', (d, i) => i * SMALL_FONT);
     }
