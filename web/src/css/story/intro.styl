@@ -13,14 +13,17 @@
 		margin-top 1rem
 		text-align center
 
-	.example 
-		max-width 400px
-		margin 0 auto
 
-	.first, .second
-		set-type-size('xx-large')
-.large
-	set-type-size('xx-large')
+	.adsStart 
+		background-color $primary
+		font-family $national
+		set-type-size('medium')
+		text-align center 
+		padding 0.5rem 2.5rem
+		color $fg
+		text-transform uppercase
+		margin 1rem auto
+		max-width 300px
 
 .intro__meta 
 	display flex 
@@ -31,6 +34,7 @@
 	left 0
 	translate(calc(-100% - 37px),0)
 	justify-content flex-end
+	display none
 
 	p, time 
 		font-weight 500
@@ -47,10 +51,13 @@
 		a
 			border-bottom none
 
+
 .ads 
-	max-width 60rem 
+	max-width 74rem 
 	margin 2rem auto 
 	overflow hidden
+
+
 
 	.figure__container 
 		display flex
@@ -58,7 +65,6 @@
 		margin 0 auto
 		justify-content center
 		align-items center
-		overflow hidden
 		+mq('bp-3')
 			flex-direction row
 			align-items flex-start
@@ -66,6 +72,8 @@
 			display flex 
 			flex-direction row
 			align-items flex-end
+			align-self center
+			margin-right 1rem
 			+mq('bp-3')
 				flex-direction column
 			button 
@@ -84,19 +92,22 @@
 					transform scale(0.75)
 		
 		svg  
+			.tv-outline 
+				stroke $gray
+				stroke-width 4px
+				fill transparent
+
 			.title 
 				font-family $national
-				set-type-size('x-large')
+				set-type-size('xxxxx-large')
 				font-weight bold
 				fill $white
-			.show__title-bg
-				stroke $bg 
-				stroke-width 2px
+
 
 			.word-container, .tag-container
 				opacity 0
 				font-family $national-narrow 
-				set-type-size('root')
+				set-type-size('xx-large')
 				&.is-visible 
 					opacity 1
 				.word-bg
@@ -109,28 +120,28 @@
 				text-transform uppercase
 				fill $gray-light
 			.tag
-				set-type-size('root')
+				set-type-size('xx-large')
 				margin 0
 				text-align center
 				word-wrap normal
 				font-family $national
 				fill $white
-				font-weight bold
+	
 
 			.show__tag
 				text-shadow 2px 2px 5px $bg
 
 			.word
-				set-type-size('x-small')
+				set-type-size('small')
 				margin 0
 				text-align center
 				word-wrap normal
 				font-family $martel
 				fill $gray-light
-			.show__tag-bg 
-				fill $bg
-				stroke $bg 
-				stroke-width 2px
+
+		.pudding-list 
+			margin-left 1rem
+
 		.article-title
 			.title-bg 
 				fill $primary 

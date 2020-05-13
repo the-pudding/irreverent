@@ -30,19 +30,20 @@ d3.selection.prototype.tvChart = function init(options) {
     let width = 0;
     let height = 0;
     const MARGIN_TOP = 0;
-    const MARGIN_BOTTOM = 60;
-    const MARGIN_LEFT = 16;
+    const MARGIN_BOTTOM = 0;
+    const MARGIN_LEFT = 0;
     const MARGIN_RIGHT = 0;
-    const FONT_HEIGHT = 20;
+    const FONT_HEIGHT = 30;
     const WORD_WIDTH = 80;
     const PADDING = 16;
-    const COLUMN_WIDTH = 640;
+    const COLUMN_WIDTH = 880;
     const RAIL_WIDTH = 150;
     let showWidth = 0;
     let TV_STAND = 0;
 
     let titleIndex = 0;
     let currentTitle = 'Gossip Girls';
+    let linearGradient = null;
 
     // animations
     let changeTitles = 3000;
@@ -81,31 +82,66 @@ d3.selection.prototype.tvChart = function init(options) {
         .append('image')
         .attr('xlink:href', 'assets/images/gossip_girl.jpg')
         .attr('class', 'show');
+      $tv.append('rect').attr('class', 'tv-overlay');
+      $tv.append('rect').attr('class', 'tv-outline');
 
-      $tv
-        .append('image')
-        .attr('class', 'tv')
-        .attr('xlink:href', 'assets/images/tv.png');
+      $tv.append('g').attr('class', 'g-titles');
+
+      // $tv
+      //   .append('image')
+      //   .attr('class', 'tv')
+      //   .attr('xlink:href', 'assets/images/tv.png');
     }
 
+    function setupGradient() {
+      linearGradient
+        .attr('x1', '0%')
+        .attr('y1', '0%')
+        .attr('x2', '0%')
+        .attr('y2', '100%');
+
+      linearGradient
+        .append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', '#1c1c1c')
+        .attr('stop-opacity', '0%');
+
+      linearGradient
+        .append('stop')
+        .attr('offset', '50%')
+        .attr('stop-color', '#1c1c1c')
+        .attr('stop-opacity', '30%');
+
+      linearGradient
+        .append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', '#181818')
+        .attr('stop-opacity', '100%');
+    }
     function resizeTV() {
       showWidth = width / 1.06;
 
       $tv
-        .select('.tv')
+        .select('.tv-outline')
+        .attr('width', width - 8)
+        .attr('height', height)
+        .attr('x', MARGIN_LEFT + 4)
+        .attr('y', MARGIN_TOP);
+
+      $tv
+        .select('.show')
         .attr('width', width)
-        .attr('height', width / 1.6);
+        .attr('height', height)
+        .attr('y', MARGIN_TOP)
+        .attr('x', MARGIN_LEFT);
 
       $tv
-        .select('.show')
-        .attr('width', showWidth)
-        .attr('height', showWidth / 1.8);
-
-      $tv.select('.tv').attr('x', 0);
-      $tv
-        .select('.show')
-        .attr('x', width / 2 - showWidth / 2)
-        .attr('y', 10);
+        .select('.tv-overlay')
+        .attr('width', width - 8)
+        .attr('height', height)
+        .attr('y', MARGIN_TOP)
+        .attr('x', MARGIN_LEFT)
+        .style('fill', 'url(#linear-gradient');
     }
 
     function resizeTitles() {
@@ -113,7 +149,7 @@ d3.selection.prototype.tvChart = function init(options) {
         .selectAll('.g-meta')
         .attr(
           'transform',
-          `translate(${width / 2}, ${height - TV_STAND - FONT_HEIGHT})`
+          `translate(${width / 2}, ${height - FONT_HEIGHT * 2})`
         );
     }
 
@@ -233,8 +269,6 @@ d3.selection.prototype.tvChart = function init(options) {
         $listWords = $listSvg.append('g').attr('class', 'g-words');
         // setup tv
         $tv = $svg.append('g').attr('class', 'g-tv');
-        $tv.append('rect').attr('class', 'tv-outline');
-        $tv.append('g').attr('class', 'g-titles');
 
         setupArticleTitle();
 
@@ -245,6 +279,13 @@ d3.selection.prototype.tvChart = function init(options) {
         $vis = $svg.append('g').attr('class', 'g-vis');
 
         addTV();
+
+        // setup gradient for overlay
+        const defs = $svg.append('defs');
+        linearGradient = defs
+          .append('linearGradient')
+          .attr('id', 'linear-gradient');
+        setupGradient();
       },
       // on resize, update new dimensions
       resize() {
@@ -261,7 +302,7 @@ d3.selection.prototype.tvChart = function init(options) {
         else if (tooNarrow) width = width;
         else width = COLUMN_WIDTH - 2 * RAIL_WIDTH;
 
-        height = width / 1.6;
+        height = width / 1.8;
 
         $svg
           .attr('width', width + MARGIN_LEFT + MARGIN_RIGHT)
@@ -270,14 +311,12 @@ d3.selection.prototype.tvChart = function init(options) {
         TV_STAND = height * 0.2;
 
         const listWidth = threeColumnsFit ? RAIL_WIDTH : RAIL_WIDTH;
-        const listHeight = tooNarrow
-          ? $list.node().offsetHeight
-          : height - TV_STAND;
+        const listHeight = tooNarrow ? $list.node().offsetHeight : height;
         $listSvg.attr('width', listWidth).attr('height', listHeight);
 
         const controls = d3
           .select('.controls')
-          .style('width', `${RAIL_WIDTH}px`);
+          .style('min-width', `${RAIL_WIDTH}px`);
 
         resizeTV();
         resizeArticleTitle();
@@ -309,13 +348,7 @@ d3.selection.prototype.tvChart = function init(options) {
             const tagGroup = group
               .append('g')
               .attr('class', 'g-tags')
-              .attr('transform', `translate(0, ${FONT_HEIGHT})`);
-
-            tagGroup
-              .append('text')
-              .attr('class', 'show__tag-bg tag')
-              .text((d) => `${d.word1} • ${d.word2} • ${d.word3}`)
-              .attr('text-anchor', 'middle');
+              .attr('transform', `translate(0, ${FONT_HEIGHT * 1.5})`);
 
             tagGroup
               .append('text')
@@ -327,12 +360,6 @@ d3.selection.prototype.tvChart = function init(options) {
 
             titleGroup
               .append('text')
-              .attr('class', 'show__title-bg title')
-              .text((d) => d.title)
-              .attr('text-anchor', 'middle');
-
-            titleGroup
-              .append('text')
               .attr('class', 'show__title title')
               .text((d) => d.title)
               .attr('text-anchor', 'middle');
@@ -341,7 +368,7 @@ d3.selection.prototype.tvChart = function init(options) {
           })
           .attr(
             'transform',
-            `translate(${width / 2}, ${height - TV_STAND - FONT_HEIGHT})`
+            `translate(${width / 2}, ${height - FONT_HEIGHT * 3})`
           )
           .attr('opacity', 0);
 

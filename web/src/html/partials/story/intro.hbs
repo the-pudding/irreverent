@@ -10,13 +10,21 @@
 
 
 	{{#each doc.intro}}
-	<p class='prose'>{{{value}}}</p>
+	<p class='prose prose-large'>{{{value}}}</p>
 	{{/each}}
+
+	<button class='adsStart'>Watch With Me</button>
 
 	{{> story/ads }}
 
-	{{#each doc.postTv}}
-	<p class='prose'>{{{value}}}</p>
+	{{#each doc.postTV}}
+	<p class='prose prose-large'>{{{value}}}</p>
 	{{/each}}
 
+	<p class='prose'>{{{doc.preDef}}}</p>
+	<p class='definition'>{{{doc.def}}}</p>
+
+	{{#each doc.postComplaint}}
+	<p class='prose'>{{{value}}}</p>
+	{{/each}}
 </section>
