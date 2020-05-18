@@ -29,16 +29,20 @@
 
 .figure-title
     font-family $national-narrow
-    set-type-size('large-font')
+    set-type-size('xx-large')
     font-weight bold
     margin-top 0
     text-align center 
+    +mq('bp-3')
+        set-type-size('large-font')
 
 .figure-sub
     font-family $national-narrow
-    set-type-size('large')
+    set-type-size('medium')
     margin 0
     text-align center
+    +mq('bp-3')
+        set-type-size('large')
 
 
 .highlight
@@ -66,3 +70,12 @@
     background $def-gradient
     span 
         font-weight bold
+
+
+.methods
+    max-width $column-width
+    margin 0 auto 
+    &__prose 
+        padding 0 1rem
+        font-family $national
+        set-type-size('root')

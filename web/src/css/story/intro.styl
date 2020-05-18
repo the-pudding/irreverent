@@ -38,11 +38,13 @@
 
 .intro__meta 
 	display flex 
-	flex-direction row
+	flex-direction column
 	align-items baseline
 	margin 0 auto 2rem auto
 	max-width 55rem
 	padding 0 1rem
+	+mq('bp-3')
+		flex-direction row
 
 	p, time 
 		font-weight 500
@@ -104,15 +106,19 @@
 		svg  
 			.title 
 				font-family $national
-				set-type-size('xxxxx-large')
+				set-type-size('xx-large')
 				font-weight bold
 				fill $white
+				+mq('bp-3')
+					set-type-size('xxxxx-large')
 
 
 			.word-container, .tag-container
 				opacity 0
 				font-family $national-narrow 
-				set-type-size('xx-large')
+				set-type-size('large')
+				+mq('bp-3')
+					set-type-size('xx-large')
 				&.is-visible 
 					opacity 1
 				.word-bg
@@ -126,12 +132,14 @@
 				fill $gray-light
 				
 			.tag
-				set-type-size('xx-large')
+				set-type-size('large')
 				margin 0
 				text-align center
 				word-wrap normal
 				font-family $national
 				fill $white
+				+mq('bp-3')
+					set-type-size('xx-large')
 	
 
 			.show__tag
